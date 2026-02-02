@@ -69,6 +69,22 @@ namespace Client.Data
         }
         #endregion
 
+        /// <summary>
+        /// Ajoute le header Authorization au HttpClient de la classe de base DAO.
+        /// </summary>
+        protected void SetToken(string token)
+        {
+            this.client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        /// <summary>
+        /// Supprime le header Authorization du HttpClient.
+        /// </summary>
+        protected void RemoveToken()
+        {
+            this.client.DefaultRequestHeaders.Authorization = null;
+        }
+
         #region Méthodes publiques
         /// <summary>
         /// Récupère de façon assynchrone

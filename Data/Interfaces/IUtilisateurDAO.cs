@@ -20,6 +20,8 @@ namespace ClientData.Interfaces
         /// <exception cref="DAOError">Si il y a un probleme avec le DAO</exception>
         public Task<Utilisateur> Login(Utilisateur user);
 
+        public void Logout();
+
         /// <summary>
         /// Permet d'enregistrer son compte dans la base de données
         /// </summary>
