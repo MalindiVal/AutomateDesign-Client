@@ -25,5 +25,13 @@ namespace Service.Interfaces
         /// <param name="user">Utilisateur avec un login et un mot de passe</param>
         /// <returns>Utilisateur avec un identifiant</returns>
         public Task<Utilisateur> Login(Utilisateur user);
+
+        /// <summary>
+        /// Logs the current user out of the application and ends the user's session.
+        /// </summary>
+        /// <remarks>After calling this method, the user will no longer be authenticated and any
+        /// session-specific data may be cleared. Subsequent operations that require authentication will fail until the
+        /// user logs in again.</remarks>
+        public void Logout();
     }
 }

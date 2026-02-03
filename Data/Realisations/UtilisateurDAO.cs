@@ -18,12 +18,12 @@ namespace ClientData.Realisations
         /// <summary>
         /// Stocke le token JWT après une authentification réussie.
         /// </summary>
-        private static string _token;
+        private static string? _token;
 
         /// <summary>
         /// Expose le token en lecture seule pour que d'autres DAO puissent l'utiliser.
         /// </summary>
-        public static string Token => _token;
+        public static string? Token => _token;
 
         /// inheritdoc/>
         public async Task<Utilisateur> Login(Utilisateur user)
@@ -39,7 +39,7 @@ namespace ClientData.Realisations
                 {
                     _token = loginResponse.Token;
                     SetToken(_token);          // Injecte le Bearer token sur le HttpClient
-                    res = loginResponse.Utilisateur;
+                    res = loginResponse.User;
                 }
             }
             return res;
@@ -60,7 +60,7 @@ namespace ClientData.Realisations
                 {
                     _token = registerResponse.Token;
                     SetToken(_token);
-                    res = registerResponse.Utilisateur;
+                    res = registerResponse.User;
                 }
             }
             return res;
@@ -127,13 +127,16 @@ namespace ClientData.Realisations
         /// </summary>
         private static string PadBase64(string input)
         {
-            return input.Length % 4 switch
+            int res = input.Length % 4;
+            string op = input;
+            switch(res)
             {
-                2 => input + "==",
-                3 => input + "=",
-                _ => input
+                case 2: op = input + "=="; break;
+                case 3: op = input + "="; break;
             };
+            return op;
         }
+
     }
 
     /// <summary>
@@ -142,7 +145,7 @@ namespace ClientData.Realisations
     /// </summary>
     public class LoginResponseDTO
     {
-        public Utilisateur Utilisateur { get; set; }
-        public string Token { get; set; }
+        public Utilisateur? User { get; set; }
+        public string? Token { get; set; }
     }
 }

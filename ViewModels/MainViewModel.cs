@@ -243,7 +243,7 @@ namespace ViewModels
             AutomateService service = CreateAutomateService();
 
             // On crée un automate vierge
-            Automate automate = new Automate { Nom = title , Utilisateur = this.curentuser };
+            Automate automate = new Automate { Nom = title };
 
             // On demande un éditeur via DI
             AutomateEditorViewModel editor = editorFactory();
@@ -268,7 +268,6 @@ namespace ViewModels
                     AutomateEditorViewModel editor = editorFactory();
 
                     // On injecte le service utilisé pour le chargement
-                    automate.Utilisateur = this.curentuser;
                     editor.LoadAutomate(automate);
 
                     // On l'ajoute dans les onglets
@@ -313,10 +312,6 @@ namespace ViewModels
                         this.curentuser = user;
                         this.Connected = true;
                         this.LoginMessage = "Bienvenue, " + this.curentuser.Login;
-                        foreach(AutomateEditorViewModel editor in this.OpenEditors)
-                        {
-                            editor.Metier.Utilisateur = this.curentuser;
-                        }
                         succes();
                     }
                     else
@@ -336,11 +331,8 @@ namespace ViewModels
         private void Disconnect()
         {
             this.curentuser = null;
-            foreach (AutomateEditorViewModel editor in this.OpenEditors)
-            {
-                editor.Metier.Utilisateur = this.curentuser;
-            }
             this.Connected = false;
+            this.userService.Logout();
             ShowHome();
         }
 
@@ -365,7 +357,6 @@ namespace ViewModels
                         currenteditor = editor;
 
                         // On lui injecte l'automate chargé
-                        automate.Utilisateur = this.curentuser;
                         editor.LoadAutomate(automate);
 
                         // On l’ouvre

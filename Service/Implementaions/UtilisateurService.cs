@@ -31,6 +31,11 @@ namespace Service.Implementaions
             return await this.dao.Login(user);
         }
 
+        public void Logout()
+        {
+            this.Logout();
+        }
+
         /// <inheritdoc>
         public async Task<Utilisateur> Register(Utilisateur user)
         {
