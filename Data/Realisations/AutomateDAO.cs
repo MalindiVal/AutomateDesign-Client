@@ -22,6 +22,7 @@ namespace ClientData.Realisations
             Automate res = automate;
             AutomateDto dtoToSend = AutomateDto.FromDomain(automate);
 
+            SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.PostAsync("Automate/ExportAutomate", dtoToSend);
             if (reponseHttp.IsSuccessStatusCode)
             {
@@ -43,6 +44,7 @@ namespace ClientData.Realisations
         public async Task<List<Automate>> GetAllAutomates()
         {
             List<Automate> list = new List<Automate>();
+            SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomates");
 
             if (reponseHttp.IsSuccessStatusCode)
@@ -60,6 +62,7 @@ namespace ClientData.Realisations
         public async Task<List<Automate>> GetAllAutomatesByUser()
         {
             List<Automate> list = new List<Automate>();
+            SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomatesByUser");
 
             if (reponseHttp.IsSuccessStatusCode)
@@ -77,6 +80,7 @@ namespace ClientData.Realisations
         public async Task<Automate> GetAutomate(int id)
         {
             Automate a = new Automate();
+            SetToken(UtilisateurDAO.Token);
             a.Id = id;
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAutomateById?id=" + id);
             if (reponseHttp.IsSuccessStatusCode)
@@ -99,6 +103,7 @@ namespace ClientData.Realisations
                 throw new DAOError("L'automate doit avoir un ID pour être mis à jour");
             }
 
+            SetToken(UtilisateurDAO.Token);
             AutomateDto dtoToSend = AutomateDto.FromDomain(automate);
 
             HttpResponseMessage response = await this.PutAsync($"Automate/UpdateAutomate", dtoToSend);

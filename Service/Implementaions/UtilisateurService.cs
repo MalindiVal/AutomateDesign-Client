@@ -33,7 +33,7 @@ namespace Service.Implementaions
 
         public void Logout()
         {
-            this.Logout();
+            this.dao.Logout();
         }
 
         /// <inheritdoc>

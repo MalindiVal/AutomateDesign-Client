@@ -74,8 +74,16 @@ namespace Client.Data
         /// </summary>
         protected void SetToken(string token)
         {
-            this.client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            if (string.IsNullOrWhiteSpace(token))
+                throw new ArgumentException("Token invalide", nameof(token));
+
+            if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                token = token.Substring("Bearer ".Length);
+
+            this.client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         }
+
 
         /// <summary>
         /// Supprime le header Authorization du HttpClient.
@@ -94,7 +102,7 @@ namespace Client.Data
         public async Task<HttpResponseMessage> GetAsync(string demande)
         {
             string adresseEnvoi = adressAPI + demande;
-            return await client.GetAsync(adresseEnvoi);
+            return await this.client.GetAsync(adresseEnvoi);
         }
 
         /// <summary>
