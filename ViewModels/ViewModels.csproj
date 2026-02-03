@@ -10,7 +10,6 @@
     <ProjectReference Include="..\Data\ClientData.csproj" />
     <ProjectReference Include="..\LogicLayer\LogicLayer.csproj" />
     <ProjectReference Include="..\Service\ClientService.csproj" />
-    <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
 </Project>

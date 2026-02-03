@@ -370,6 +370,7 @@ namespace ViewModels
             }    
         }
 
+        /*
         public async Task ExporterAutomateReseau(string nom)
         {
             if (CurrentViewModel is AutomateEditorViewModel viewModel)
@@ -381,10 +382,10 @@ namespace ViewModels
                         viewModel.ConstruireAutomateDepuisVM();
 
                         if (nom != null)
-                            viewModel.Metier.Nom = nom;
+                            viewModel.Automate.Title = nom;
 
                         AutomateService service = CreateAutomateService();
-                        viewModel.Metier = await service.AddAutomate(viewModel.Metier);
+                        viewModel.Automate = await service.AddAutomate(viewModel.Automate.Metier);
                         viewModel.NotificationMessage = "L'automate a été enregistré en réseau sous le nom : " + nom;
                         viewModel.IsError = false;
                     }
@@ -406,7 +407,7 @@ namespace ViewModels
                 
                 
             }
-        }
+        } */
 
         private void OpenCurrentEditor(AutomateEditorViewModel vm)
         {
