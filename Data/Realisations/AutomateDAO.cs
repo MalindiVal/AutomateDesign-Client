@@ -19,12 +19,7 @@ namespace ClientData.Realisations
         /// <inheritdoc/>
         public async Task<Automate> AddAutomate(Automate automate)
         {
-            if(automate.Utilisateur == null)
-            {
-                throw new DAOError("Veuillez vous connecter avant de réaliser une exportation en ligne");
-            }
-
-            // Conversion de l'automate en DTO pour l'envoi
+            Automate res = automate;
             AutomateDto dtoToSend = AutomateDto.FromDomain(automate);
 
             HttpResponseMessage reponseHttp = await this.PostAsync("Automate/ExportAutomate", dtoToSend);
@@ -35,11 +30,13 @@ namespace ClientData.Realisations
 
                 if (dtoBack == null)
                     throw new DAOError("Réponse invalide lors de l'ajout de l'automate.");
-                return dtoBack.ToDomain();
+                res = dtoBack.ToDomain();
             } else
             {
-                throw new DAOError("Le nom " + automate.Nom + " existe déja");
+                throw new DAOError("Une erreur s'est produit lors de l'exportation de l'automate ");
             }
+
+                return res;
         }
 
         /// <inheritdoc/>
@@ -60,10 +57,10 @@ namespace ClientData.Realisations
         }
 
         /// <inheritdoc/>
-        public async Task<List<Automate>> GetAllAutomatesByUser(Utilisateur user)
+        public async Task<List<Automate>> GetAllAutomatesByUser()
         {
             List<Automate> list = new List<Automate>();
-            HttpResponseMessage reponseHttp = await this.PostAsync("Automate/GetAllAutomatesByUser",user);
+            HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomatesByUser");
 
             if (reponseHttp.IsSuccessStatusCode)
             {
@@ -98,11 +95,6 @@ namespace ClientData.Realisations
         public async Task<Automate> UpdateAutomate(Automate automate)
         {
             if (!automate.Id.HasValue)
-            {
-                throw new DAOError("L'automate doit avoir un ID pour être mis à jour");
-            }
-
-            if (automate.Utilisateur == null)
             {
                 throw new DAOError("L'automate doit avoir un ID pour être mis à jour");
             }

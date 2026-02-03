@@ -26,7 +26,7 @@ namespace Service.Interfaces
         /// <summary>
         /// Récupère tous les automates d'un utilisateur depuis le serveur.
         /// </summary>
-        public Task<List<Automate>> GetAllAutomatesByUser(Utilisateur user);
+        public Task<List<Automate>> GetAllAutomatesByUser();
 
         /// <summary>
         /// Permet d'exporter un Automate dans la base de données

@@ -87,12 +87,11 @@ namespace ViewModels
         /// <param name="service">Service pour accéder aux automates.</param>
         /// <param name="openEditor">Action pour ouvrir l'éditeur d'automate.</param>
         /// <param name="cancel">Action pour annuler l'importation.</param>
-        public ImportAutomateViewModel(IAutomateService service, Action<Automate> openEditor, Action cancel, Utilisateur user)
+        public ImportAutomateViewModel(IAutomateService service, Action<Automate> openEditor, Action cancel)
         {
             this.service = service;
             this.openEditor = openEditor;
             this.cancel = cancel;
-            this.user = user;
 
             refreshCommand = new RelayCommand(async () => await LoadAutomates());
             importCommand = new RelayCommand(async () => await ImportSelectedAutomate(),
@@ -133,7 +132,7 @@ namespace ViewModels
         /// <returns>Une tâche asynchrone représentant l'opération.</returns>
         private async Task LoadAutomates()
         {
-            List<Automate> automatesList = await service.GetAllAutomatesByUser(this.user);
+            List<Automate> automatesList = await service.GetAllAutomatesByUser();
 
             Automates.Clear();
             foreach (Automate automate in automatesList)

@@ -274,8 +274,7 @@ namespace ViewModels
                     OpenEditors.Add(editor);
                     CurrentViewModel = editor;
                 },
-                cancel: ShowHome,
-                this.curentuser
+                cancel: ShowHome
             );
         }
 
