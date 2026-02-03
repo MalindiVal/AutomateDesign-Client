@@ -13,7 +13,7 @@
         <!-- Convertisseurs -->
         <conv:IsTypeConverter x:Key="IsType"/>
         <conv:RefEqualsMultiConverter x:Key="RefEq"/>
-        
+
         <!-- Style pour les RadioButton -->
         <Style x:Key="SidebarRadio" TargetType="RadioButton" BasedOn="{x:Null}">
             <Setter Property="Background" Value="Transparent"/>
@@ -86,78 +86,100 @@
     </UserControl.Resources>
 
     <!-- Bordure droite -->
-    <Border BorderBrush="{DynamicResource App.Divider}" BorderThickness="0,0,1,0">
+    <Border BorderBrush="{DynamicResource App.Divider}" BorderThickness="0,0,1,0" Height="Auto">
 
-        <StackPanel Margin="12">
-            <!-- Accueil -->
-            <RadioButton Style="{StaticResource SidebarRadio}" GroupName="SideMenu"
-                         Command="{Binding NavigateHome}" Margin="0,6,0,0"
-             IsChecked="{Binding DataContext.CurrentViewModel,
-                                 RelativeSource={RelativeSource AncestorType=Window},
-                                 Mode=OneWay,
-                                 Converter={StaticResource IsType},
-                                 ConverterParameter={x:Type viewModels:HomeViewModel}}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/images/icone_home.png"
-                           Width="24" Height="24" Stretch="Uniform" Margin="0,0,8,0"/>
-                    <TextBlock Text="Accueil" FontSize="24" VerticalAlignment="Center"/>
-                </StackPanel>
-            </RadioButton>
-
-            <!-- Automates -->
-            <RadioButton Style="{StaticResource SidebarRadio}" GroupName="SideMenu"
-                         Command="{Binding NavigateAutomates}" Margin="0,6,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/images/icone_automates.png"
-                           Width="24" Height="24" Stretch="Uniform" Margin="0,0,8,0"/>
-                    <TextBlock Text="Automates" FontSize="24" VerticalAlignment="Center"/>
-                </StackPanel>
-            </RadioButton>
+        <Grid Margin="12">
             
-            <!-- Séparation -->
-            <Image Source="pack://application:,,,/images/side_bar_sep.png"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+            
+            <StackPanel Grid.Row="0">
+                <!-- Accueil -->
+                <RadioButton Style="{StaticResource SidebarRadio}" GroupName="SideMenu" Command="{Binding NavigateHome}" Margin="0,6,0,0"
+             IsChecked="{Binding DataContext.CurrentViewModel,RelativeSource={RelativeSource AncestorType=Window},Mode=OneWay,
+                                 Converter={StaticResource IsType},ConverterParameter={x:Type viewModels:HomeViewModel}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/images/icone_home.png"
+                           Width="24" Height="24" Stretch="Uniform" Margin="0,0,8,0"/>
+                        <TextBlock Text="Accueil" FontSize="24" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <!-- Automates -->
+                <RadioButton Style="{StaticResource SidebarRadio}" GroupName="SideMenu"
+                         Command="{Binding NavigateAutomates}" Margin="0,6,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/images/icone_automates.png"
+                           Width="24" Height="24" Stretch="Uniform" Margin="0,0,8,0"/>
+                        <TextBlock Text="Automates" FontSize="24" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <!-- Séparation -->
+                <Image Source="pack://application:,,,/images/side_bar_sep.png"
                    Margin="12,12,12,12"/>
+            </StackPanel>
 
             <!-- onglets ouverts -->
-            <ItemsControl ItemsSource="{Binding OpenEditors}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewModels:AutomateEditorViewModel}">
-                        <Grid Margin="0,4,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Row="1"
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding OpenEditors}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:AutomateEditorViewModel}">
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Activer -->
-                            <RadioButton Style="{StaticResource SidebarRadio}"
+                                <!-- Activer -->
+                                <RadioButton Style="{StaticResource SidebarRadio}"
                                  GroupName="SideMenu"
                                  Command="{Binding DataContext.ActivateEditorCommand,
                                                    RelativeSource={RelativeSource AncestorType=Window}}"
                                  CommandParameter="{Binding}">
-                                <RadioButton.IsChecked>
-                                    <MultiBinding Mode="OneWay" Converter="{StaticResource RefEq}">
-                                        <!-- VM courant -->
-                                        <Binding Path="DataContext.CurrentViewModel"
+                                    <RadioButton.IsChecked>
+                                        <MultiBinding Mode="OneWay" Converter="{StaticResource RefEq}">
+                                            <!-- VM courant -->
+                                            <Binding Path="DataContext.CurrentViewModel"
                                                RelativeSource="{RelativeSource AncestorType=Window}"
                                                Mode="OneWay"/>
-                                        <!-- l’item courant (onglet actuel) -->
-                                        <Binding Mode="OneWay"/>
-                                    </MultiBinding>
-                                </RadioButton.IsChecked>
-                                <TextBlock Text="{Binding Title}"/>
-                            </RadioButton>
-                            
-                            <!-- Fermer -->
-                            <Button Grid.Column="1" Margin="6,0,0,0" Padding="0"
+                                            <!-- l’item courant (onglet actuel) -->
+                                            <Binding Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </RadioButton.IsChecked>
+                                    <TextBlock Text="{Binding Title}"/>
+                                </RadioButton>
+
+                                <!-- Fermer -->
+                                <Button Grid.Column="1" Margin="6,0,0,0" Padding="0"
                                 Style="{StaticResource CloseTabIconButton}"
                                 Command="{Binding DataContext.CloseEditorCommand,
                                                   RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 AutomationProperties.Name="Fermer l'onglet"/>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <StackPanel Grid.Row="2">
+                <!-- Séparation -->
+                <Image Source="pack://application:,,,/images/side_bar_sep.png" Margin="12,12,12,12"/>
+                <RadioButton Style="{StaticResource SidebarRadio}" GroupName="SideMenu"
+             Command="{Binding GoSettings}" Margin="0,6,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/images/icone_automates.png" Width="24" Height="24" Stretch="Uniform" Margin="0,0,8,0"/>
+                        <TextBlock Text="Paramètres" FontSize="24" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+            </StackPanel>
+
+
+        </Grid>
     </Border>
 </UserControl>
