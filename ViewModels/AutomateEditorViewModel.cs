@@ -29,7 +29,6 @@ namespace ViewModels
         #endregion
 
         #region Attributes
-        private double etatRadius = 75;
         private double canvasWidth;
         private double canvasHeight;
         private string notification;
@@ -108,11 +107,11 @@ namespace ViewModels
         {
             get
             {
-                return etatRadius;
+                return automate.EtatRadius;
             }
             set
             {
-                etatRadius = value;
+                automate.EtatRadius = value;
                 OnPropertyChanged();
             }
         }
@@ -500,7 +499,7 @@ namespace ViewModels
             }
             else
             {
-                this.automate.CheckOverlap(x,y);
+                res = this.automate.CheckOverlap(x,y);
             }
 
             return res;
@@ -603,16 +602,11 @@ namespace ViewModels
                 this.automate.Metier = await this.service.UpdateAutomate(this.automate.Metier);
                 notificationMessage = "L'automate a été mise à jour sous le nom : " + this.automate.Metier.Nom;
             }
-            RecupAutomate();
+            this.automate.RecupAutomate();
             if (!string.IsNullOrEmpty(notificationMessage))
             {
                 ShowNotification(notificationMessage, false);
             }
-        }
-
-        private void RecupAutomate()
-        {
-            this.automate.RecupAutomate();
         }
 
         #endregion
@@ -697,7 +691,7 @@ namespace ViewModels
                     notificationMessage = "Échec de l'enregistrement : " + ex.Message;
                     ShowNotification(notificationMessage, true);
                 }
-                RecupAutomate();
+                this.automate.RecupAutomate();
             }
         }
 
@@ -738,7 +732,7 @@ namespace ViewModels
         {
             this.automate = new AutomateVM(automate) ?? new AutomateVM(new Automate());
 
-            RecupAutomate();
+            this.automate.RecupAutomate();
         }
     }
 }
