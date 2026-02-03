@@ -21,7 +21,10 @@ namespace ClientData.Realisations
         {
             Automate res = automate;
             AutomateDto dtoToSend = AutomateDto.FromDomain(automate);
-
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
             SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.PostAsync("Automate/ExportAutomate", dtoToSend);
             if (reponseHttp.IsSuccessStatusCode)
@@ -44,6 +47,10 @@ namespace ClientData.Realisations
         public async Task<List<Automate>> GetAllAutomates()
         {
             List<Automate> list = new List<Automate>();
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
             SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomates");
 
@@ -62,6 +69,10 @@ namespace ClientData.Realisations
         public async Task<List<Automate>> GetAllAutomatesByUser()
         {
             List<Automate> list = new List<Automate>();
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
             SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomatesByUser");
 
@@ -80,6 +91,10 @@ namespace ClientData.Realisations
         public async Task<Automate> GetAutomate(int id)
         {
             Automate a = new Automate();
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
             SetToken(UtilisateurDAO.Token);
             a.Id = id;
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAutomateById?id=" + id);
@@ -98,6 +113,11 @@ namespace ClientData.Realisations
         /// <inheritdoc/>
         public async Task<Automate> UpdateAutomate(Automate automate)
         {
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
+
             if (!automate.Id.HasValue)
             {
                 throw new DAOError("L'automate doit avoir un ID pour être mis à jour");
