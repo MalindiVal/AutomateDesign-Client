@@ -80,7 +80,7 @@ namespace IHM
 
                 if (!clickedTransition && Vm != null)
                 {
-                    foreach (TransitionVM t in Vm.Transitions)
+                    foreach (TransitionVM t in Vm.Automate.Transitions)
                     {
                         t.IsSelected = false;
                     }
@@ -305,7 +305,7 @@ namespace IHM
         {
             if (sender is Path path && path.DataContext is TransitionVM clicked && Vm != null)
             {
-                foreach (TransitionVM t in Vm.Transitions)
+                foreach (TransitionVM t in Vm.Automate.Transitions)
                 {
                     t.IsSelected = false;
                 }

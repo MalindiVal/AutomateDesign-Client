@@ -20,7 +20,7 @@ namespace ViewModels
 
         private TypeEtat currentTool = TypeEtat.None;
 
-        private Automate metier = new Automate();
+        private AutomateVM automate;
         private EtatVM? transitionStartEtat;
         private EtatVM? draggedEtat;
         private bool isDraggingEtat = false;
@@ -29,7 +29,7 @@ namespace ViewModels
         #endregion
 
         #region Attributes
-        private double etatRadius = 75;       
+        private double etatRadius = 75;
         private double canvasWidth;
         private double canvasHeight;
         private string notification;
@@ -42,8 +42,6 @@ namespace ViewModels
         private ICommand toolState;
         private ICommand toolFinalState;
         private ICommand saveCommand;
-        private readonly ObservableCollection<EtatVM> etats = new();
-        private readonly ObservableCollection<TransitionVM> transitions = new();
         #endregion
 
 
@@ -76,17 +74,6 @@ namespace ViewModels
 
         #endregion
 
-
-        /// <summary>
-        /// Liste des etats contenus dans le canvas
-        /// </summary>
-        public ObservableCollection<EtatVM> Etats => etats;
-
-        /// <summary>
-        /// Liste des transitions
-        /// </summary>
-        public ObservableCollection<TransitionVM> Transitions => transitions;
-        
         /// <summary>
         /// L'outil actuellement utilisé
         /// </summary>
@@ -101,15 +88,15 @@ namespace ViewModels
         /// <summary>
         /// Le titre de l'éditeur
         /// </summary>
-        public string Title 
+        public string Title
         {
             get
             {
-                return this.metier.Nom;
+                return this.automate.Title;
             }
             set
             {
-                this.metier.Nom = value;
+                this.automate.Title = value;
                 OnPropertyChanged();
             }
         }
@@ -119,12 +106,14 @@ namespace ViewModels
         /// </summary>
         public double EtatRadius
         {
-            get {
+            get
+            {
                 return etatRadius;
             }
-            set { 
-                etatRadius = value; 
-                OnPropertyChanged(); 
+            set
+            {
+                etatRadius = value;
+                OnPropertyChanged();
             }
         }
 
@@ -152,14 +141,27 @@ namespace ViewModels
         /// <summary>
         /// L'objet metier de  l'editeur
         /// </summary>
-        public Automate Metier { get => metier; set => metier = value; }
-        
+        public AutomateVM Automate
+        {
+            get
+            {
+                return automate;
+            }
+            set
+            {
+                automate = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Phrase de notification lors d'une action
         /// </summary>
-        public string NotificationMessage { 
+        public string NotificationMessage
+        {
             get => notification;
-            set {
+            set
+            {
                 notification = value;
                 OnPropertyChanged();
             }
@@ -247,7 +249,13 @@ namespace ViewModels
             this.canvasExportService = canvasExportService;
             this.cSharpService = cSharpService;
 
-            this.metier = new Automate();
+            this.automate = new AutomateVM(new Automate());
+
+            automate.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(AutomateVM.Title))
+                    OnPropertyChanged(nameof(Title));
+            };
 
             InitializeCommands();
         }
@@ -455,32 +463,16 @@ namespace ViewModels
                 bool estFinal = CurrentTool == TypeEtat.Final;
                 if (estInitial)
                 {
-                    EtatVM? ancienInitial = Etats.FirstOrDefault(e => e.EstInitial);
-                    if (ancienInitial != null)
-                        ancienInitial.EstInitial = false;
-                }               
-                HashSet<int> indicesUtilises = new HashSet<int>();
-                foreach (EtatVM e in Etats)
-                {
-                    if (e.Nom.StartsWith("Etat "))
-                    {
-                        string nombreTexte = e.Nom.Substring("Etat ".Length);
-                        if (int.TryParse(nombreTexte, out int n))
-                            indicesUtilises.Add(n);
-                    }
+                    this.automate.AjouterEtatInitial(x,y);
                 }
-                int indexLibre = 0;
-                while (indicesUtilises.Contains(indexLibre))
-                    indexLibre++;               
-                Etat etat = new Etat
+                else if (estFinal)
                 {
-                    Nom = $"Etat {indexLibre}",
-                    Position = new Position(x, y),
-                    EstInitial = estInitial,
-                    EstFinal = estFinal
-                };
-                Etats.Add(new EtatVM(etat) { EtatRadius = EtatRadius });
+                    this.automate.AjouterEtatFinal(x,y);
 
+                } else
+                {
+                    this.automate.AjouterEtatNormal(x,y);
+                }
             }
         }
 
@@ -502,19 +494,14 @@ namespace ViewModels
             }
 
             bool outOfBounds = x - radius < 0 || y - radius < 0 || x + radius > CanvasWidth || y + radius > CanvasHeight;
-            if (outOfBounds) {
-                res = true;
-            } else
+            if (outOfBounds)
             {
-                foreach (EtatVM evm in Etats)
-                {
-                    res = evm.CheckOverlap(x, y);
-                    if (res)
-                    {
-                        break;
-                    }
-                }
-            }   
+                res = true;
+            }
+            else
+            {
+                this.automate.CheckOverlap(x,y);
+            }
 
             return res;
         }
@@ -525,14 +512,7 @@ namespace ViewModels
         /// <param name="evm">Etat à supprimer</param>
         public void SupprimerEtat(EtatVM evm)
         {
-            List<TransitionVM> transitionsASupprimer = new List<TransitionVM>();
-            transitionsASupprimer = Transitions.Where(t => t.EtatDepart == evm || t.EtatArrivee == evm).ToList();
-
-
-            foreach (TransitionVM t in transitionsASupprimer)
-                Transitions.Remove(t);
-
-            Etats.Remove(evm);
+            this.automate.SupprimerEtat(evm);
         }
 
 
@@ -551,39 +531,11 @@ namespace ViewModels
 
             // Calculer index et total AVANT d'ajouter
             int futureIndex = start.TransitionsOut.Count(t => t.EtatArrivee == end);
-            int futureTotal = futureIndex + 1; 
+            int futureTotal = futureIndex + 1;
 
-            if (nouvelleTransition.TransitionInsideCanvas(nouvelleTransition.IsLoop,futureIndex,futureTotal,CanvasWidth,CanvasHeight))
+            if (nouvelleTransition.TransitionInsideCanvas(nouvelleTransition.IsLoop, futureIndex, futureTotal, CanvasWidth, CanvasHeight))
             {
-                // Ajout aux listes
-                start.TransitionsOut.Add(nouvelleTransition);
-                end.TransitionsIn.Add(nouvelleTransition);
-
-                // previousTransition
-                TransitionVM? previous = start.TransitionsOut
-                    .Where(t => t.EtatArrivee == end && t != nouvelleTransition)
-                    .LastOrDefault();
-                nouvelleTransition.PreviousTransition = previous;
-
-                // Génération condition
-                HashSet<int> indicesUtilises = new HashSet<int>();
-                foreach (TransitionVM t in Transitions)
-                {
-                    if (t.Condition.StartsWith("Condition "))
-                    {
-                        string nombreTexte = t.Condition.Substring("Condition ".Length);
-                        if (int.TryParse(nombreTexte, out int n))
-                            indicesUtilises.Add(n);
-                    }
-                }
-
-                int indexLibre = 0;
-                while (indicesUtilises.Contains(indexLibre)) indexLibre++;
-                nouvelleTransition.Condition = "Condition " + indexLibre;
-
-                // Ajout final
-                Transitions.Add(nouvelleTransition);
-                nouvelleTransition.RefreshGeometry();
+                this.automate.AjouterTransition(start, end);
             }
         }
 
@@ -593,9 +545,7 @@ namespace ViewModels
         /// <param name="tvm">Transition à supprimer</param>
         public void SupprimerTransition(TransitionVM tvm)
         {
-            tvm.EtatDepart.TransitionsOut.Remove(tvm);
-            tvm.EtatArrivee.TransitionsIn.Remove(tvm);
-            Transitions.Remove(tvm);
+            this.automate.SupprimerTransition(tvm);
         }
 
         #endregion
@@ -606,16 +556,7 @@ namespace ViewModels
         /// </summary>
         public void ConstruireAutomateDepuisVM()
         {
-            this.metier.Etats.Clear();
-            foreach (EtatVM etat in this.Etats)
-            {
-                this.metier.Etats.Add(etat.Metier);
-            }
-            this.metier.Transitions.Clear();
-            foreach (TransitionVM transition in this.Transitions)
-            {
-                this.metier.Transitions.Add(transition.Metier);
-            }
+            this.automate.ConstruireAutomateDepuisVM();
         }
 
         /// <summary>
@@ -627,10 +568,10 @@ namespace ViewModels
             try
             {
                 ConstruireAutomateDepuisVM();
-                string? filename = fileDialogService.SaveFile("JSON Files (*.json)|*.json|All Files (*.*)|*.*", "json", this.metier.Nom.Replace(" ", "_"));
+                string? filename = fileDialogService.SaveFile("JSON Files (*.json)|*.json|All Files (*.*)|*.*", "json", this.automate.Metier.Nom.Replace(" ", "_"));
                 if (filename != null)
                 {
-                    this.service.SauvegardeAutomate(metier, filename);
+                    this.service.SauvegardeAutomate(automate.Metier, filename);
                     notificationMessage = "Sauvegarde Locale réussi sur " + filename;
                     ShowNotification(notificationMessage, false);
                 }
@@ -650,17 +591,17 @@ namespace ViewModels
         private async Task ExporterReseau()
         {
             string notificationMessage = string.Empty;
-            
-            
-            if (this.metier.Id == null)
+
+
+            if (this.automate.Metier.Id == null)
             {
-                this.metier = await this.service.AddAutomate(this.metier);
-                notificationMessage = "L'automate a été enregistré en réseau sous le nom : " + this.metier.Nom;
+                this.automate.Metier = await this.service.AddAutomate(this.automate.Metier);
+                notificationMessage = "L'automate a été enregistré en réseau sous le nom : " + this.automate.Metier.Nom;
             }
             else
             {
-                this.metier = await this.service.UpdateAutomate(this.metier);
-                notificationMessage = "L'automate a été mise à jour sous le nom : " + this.metier.Nom;
+                this.automate.Metier = await this.service.UpdateAutomate(this.automate.Metier);
+                notificationMessage = "L'automate a été mise à jour sous le nom : " + this.automate.Metier.Nom;
             }
             RecupAutomate();
             if (!string.IsNullOrEmpty(notificationMessage))
@@ -671,32 +612,7 @@ namespace ViewModels
 
         private void RecupAutomate()
         {
-            Title = this.metier.Nom;
-            // D'abord créer tous les EtatVM
-            Dictionary<Etat, EtatVM> mapEtats = new Dictionary<Etat, EtatVM>();
-            Etats.Clear();
-
-            foreach (Etat etat in this.metier.Etats)
-            {
-                EtatVM etatVM = new EtatVM(etat) { EtatRadius = EtatRadius };
-                Etats.Add(etatVM);
-                mapEtats[etat] = etatVM;
-            }
-
-            Transitions.Clear();
-            // Ensuite créer les TransitionVM avec les bonnes références
-            foreach (Transition t in this.metier.Transitions)
-            {
-                if (mapEtats.TryGetValue(t.EtatDebut, out EtatVM debut) &&
-                    mapEtats.TryGetValue(t.EtatFinal, out EtatVM fin))
-                {
-                    TransitionVM transitionVM = new TransitionVM(debut, fin,t);
-                    transitionVM.Condition = t.Condition;
-                    Transitions.Add(transitionVM);
-                    debut.TransitionsOut.Add(transitionVM);
-                    fin.TransitionsIn.Add(transitionVM);
-                }
-            }
+            this.automate.RecupAutomate();
         }
 
         #endregion
@@ -754,12 +670,12 @@ namespace ViewModels
         public async Task ExportAsync(object rootElement)
         {
             string notificationMessage = string.Empty;
-            
+
             var (confirmed, mode, automateName) = exportOptionsService.ShowExportOptions(Title);
 
             if (confirmed && !string.IsNullOrWhiteSpace(automateName))
             {
-               this.metier.Nom = automateName;
+                this.automate.Metier.Nom = automateName;
                 ConstruireAutomateDepuisVM();
                 try
                 {
@@ -770,7 +686,8 @@ namespace ViewModels
                     else if (mode == ExportAction.Image)
                     {
                         ExportImage(rootElement);
-                    } else if (mode == ExportAction.CSharp)
+                    }
+                    else if (mode == ExportAction.CSharp)
                     {
                         ExportCSharp();
                     }
@@ -791,7 +708,7 @@ namespace ViewModels
             string? filePath = fileDialogService.SaveFile(
                 "PNG Files (*.png)|*.png|JPEG Files (*.jpg)|*.jpg|BMP Files (*.bmp)|*.bmp",
                 "png",
-                 this.metier.Nom);
+                 this.automate.Metier.Nom);
 
             if (!string.IsNullOrWhiteSpace(filePath))
             {
@@ -807,7 +724,7 @@ namespace ViewModels
             string? folderPath = fileDialogService.OpenFolder();
             if (!string.IsNullOrWhiteSpace(folderPath))
             {
-                cSharpService.ExportAutomate(this.metier, folderPath);
+                cSharpService.ExportAutomate(this.automate.Metier, folderPath);
                 notificationMessage = "Les fichiers C# ont pu etre enregistré dans le dossier  " + folderPath;
                 ShowNotification(notificationMessage, false);
             }
@@ -819,7 +736,7 @@ namespace ViewModels
         /// <param name="automate">Automate à charger.</param>
         public void LoadAutomate(Automate? automate)
         {
-            metier = automate ?? new Automate();
+            this.automate = new AutomateVM(automate) ?? new AutomateVM(new Automate());
 
             RecupAutomate();
         }

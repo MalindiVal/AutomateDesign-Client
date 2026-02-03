@@ -139,16 +139,7 @@
                 VerticalAlignment="Top"
                 Margin="12"
                 Panel.ZIndex="10" Cursor="">
-<!--
-            <Button Style="{StaticResource button}"
-                Command="{Binding EditCommand}"
-                ToolTip="Modifier"
-                Click="Edit_Click"
-                Margin="0,0,8,0">
-                <Image Source="pack://application:,,,/images/icone_rename.png"
-                   Height="40" Stretch="Uniform"/>
-            </Button>
--->
+
             <Button Style="{StaticResource button}"
                 Command="{Binding SaveCommand}"
                 ToolTip="Enregistrer"
@@ -167,70 +158,70 @@
         </StackPanel>
 
         <!-- ItemsControl pour les états -->
-        <ItemsControl ItemsSource="{Binding Etats}" >
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas Background="Transparent"
+        <ItemsControl ItemsSource="{Binding Automate.Etats}" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas Background="Transparent"
                      MouseLeftButtonDown="Canvas_MouseLeftButtonDown"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding XOffset}"/>
-                    <Setter Property="Canvas.Top" Value="{Binding YOffset}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid  MouseRightButtonUp="Etat_RightClick" MouseMove="Etat_MouseMove" MouseLeftButtonUp="Etat_MouseLeftButtonUp" >
-                        <Ellipse Width="{Binding EtatRadius}" Height="{Binding EtatRadius}" 
-                 StrokeThickness="2">
-                            <Ellipse.Style>
-                                <Style TargetType="Ellipse">
-                                    <Setter Property="Stroke" Value="Black"/>
-                                    <Setter Property="Fill" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
-                                            <Setter Property="Stroke" Value="Gold"/>
-                                            <Setter Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect Color="Gold" BlurRadius="15" ShadowDepth="0"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding XOffset}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding YOffset}"/>
                                 </Style>
-                            </Ellipse.Style>
-                        </Ellipse>
+                            </ItemsControl.ItemContainerStyle>
 
-                        <Ellipse Width="{Binding EtatFinalRadius}" Height="{Binding EtatFinalRadius}" Stroke="Black"
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid  MouseRightButtonUp="Etat_RightClick" MouseMove="Etat_MouseMove" MouseLeftButtonUp="Etat_MouseLeftButtonUp" >
+                                        <Ellipse Width="{Binding EtatRadius}" Height="{Binding EtatRadius}" 
+                 StrokeThickness="2">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Stroke" Value="Black"/>
+                                                    <Setter Property="Fill" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                            <Setter Property="Stroke" Value="Gold"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect Color="Gold" BlurRadius="15" ShadowDepth="0"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                        <Ellipse Width="{Binding EtatFinalRadius}" Height="{Binding EtatFinalRadius}" Stroke="Black"
                             Visibility="{Binding EstFinal, Converter={StaticResource BoolToVisibilityConverter}}"
                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <Line X1="{Binding ArrowStartX}" Y1="{Binding ArrowStartY}" X2="{Binding ArrowEndX}" Y2="{Binding ArrowEndY}" Stroke="Black" StrokeThickness="2" Visibility="{Binding EstInitial, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <Line X1="{Binding ArrowEndX}" Y1="{Binding ArrowEndY}" X2="{Binding ArrowEndXMinus10}" Y2="{Binding ArrowEndYMinus5}" Stroke="Black" StrokeThickness="2" Visibility="{Binding EstInitial, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <Line X1="{Binding ArrowEndX}" Y1="{Binding ArrowEndY}" X2="{Binding ArrowEndXMinus10}" Y2="{Binding ArrowEndYPlus5}" Stroke="Black" StrokeThickness="2" Visibility="{Binding EstInitial, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <TextBlock Text="{Binding Nom}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="{Binding EtatRadius}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                                        <Line X1="{Binding ArrowStartX}" Y1="{Binding ArrowStartY}" X2="{Binding ArrowEndX}" Y2="{Binding ArrowEndY}" Stroke="Black" StrokeThickness="2" Visibility="{Binding EstInitial, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <Line X1="{Binding ArrowEndX}" Y1="{Binding ArrowEndY}" X2="{Binding ArrowEndXMinus10}" Y2="{Binding ArrowEndYMinus5}" Stroke="Black" StrokeThickness="2" Visibility="{Binding EstInitial, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <Line X1="{Binding ArrowEndX}" Y1="{Binding ArrowEndY}" X2="{Binding ArrowEndXMinus10}" Y2="{Binding ArrowEndYPlus5}" Stroke="Black" StrokeThickness="2" Visibility="{Binding EstInitial, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <TextBlock Text="{Binding Nom}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="{Binding EtatRadius}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-        <!-- ItemsControl pour les transitions -->
-        <ItemsControl ItemsSource="{Binding Transitions}" IsHitTestVisible="True">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas IsHitTestVisible="True" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Canvas>
-                        <Path Data="{Binding PathData}"   MouseLeftButtonDown="Transition_LeftClick" Stroke="Transparent" StrokeThickness="14" IsHitTestVisible="True" MouseRightButtonDown="Transition_RightClick" Visibility="{Binding IsNotLoop, Converter={StaticResource BoolToVisibilityConverter}}" Panel.ZIndex="0"/>
-                        <Path Data="{Binding PathData}"  MouseLeftButtonDown="Transition_LeftClick" Stroke="Black" StrokeThickness="2" Visibility="{Binding IsNotLoop, Converter={StaticResource BoolToVisibilityConverter}}" Panel.ZIndex="0"/>
-                        <!-- LOOP : zone cliquable épaisse -->
-                        <Path Data="{Binding LoopPathData}"
+                        <!-- ItemsControl pour les transitions -->
+        <ItemsControl ItemsSource="{Binding Automate.Transitions}" IsHitTestVisible="True">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="True" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas>
+                                        <Path Data="{Binding PathData}"   MouseLeftButtonDown="Transition_LeftClick" Stroke="Transparent" StrokeThickness="14" IsHitTestVisible="True" MouseRightButtonDown="Transition_RightClick" Visibility="{Binding IsNotLoop, Converter={StaticResource BoolToVisibilityConverter}}" Panel.ZIndex="0"/>
+                                        <Path Data="{Binding PathData}"  MouseLeftButtonDown="Transition_LeftClick" Stroke="Black" StrokeThickness="2" Visibility="{Binding IsNotLoop, Converter={StaticResource BoolToVisibilityConverter}}" Panel.ZIndex="0"/>
+                                        <!-- LOOP : zone cliquable épaisse -->
+                                        <Path Data="{Binding LoopPathData}"
       Stroke="Transparent"
       StrokeThickness="14"
       IsHitTestVisible="True"
@@ -239,13 +230,13 @@
       Visibility="{Binding IsLoop, Converter={StaticResource BoolToVisibilityConverter}}"
       Panel.ZIndex="0"/>
 
-                        <!-- LOOP : affichage visuel -->
-                        <Path Data="{Binding LoopPathData}"
+                                        <!-- LOOP : affichage visuel -->
+                                        <Path Data="{Binding LoopPathData}"
       Stroke="Black"
       StrokeThickness="2"
       Visibility="{Binding IsLoop, Converter={StaticResource BoolToVisibilityConverter}}"
       Panel.ZIndex="0"/>
-                        <Ellipse Width="14" Height="14"
+                                        <Ellipse Width="14" Height="14"
          Fill="#F44336"
          Visibility="{Binding ShowControlPoint, Converter={StaticResource BoolToVisibilityConverter}}"
          Canvas.Left="{Binding HandleX, Converter={StaticResource CenterEllipseConverter}, ConverterParameter=14}"
@@ -255,30 +246,30 @@
          MouseLeftButtonUp="ControlPoint_MouseLeftButtonUp"
          Panel.ZIndex="999"/>
 
-                        <Polygon Points="{Binding FlechePoints}" Fill="Black" Visibility="{Binding IsNotLoop, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <Path Data="{Binding LoopPathData}" Stroke="Black" StrokeThickness="2"
+                                        <Polygon Points="{Binding FlechePoints}" Fill="Black" Visibility="{Binding IsNotLoop, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <Path Data="{Binding LoopPathData}" Stroke="Black" StrokeThickness="2"
                               Visibility="{Binding IsLoop, Converter={StaticResource BoolToVisibilityConverter}}" 
                               MouseRightButtonDown="Transition_RightClick"/>
-                        <Polygon Points="{Binding FlechePoints}" Fill="Black" Visibility="{Binding IsLoop, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <TextBlock Text="{Binding Condition}" FontSize="14" Padding="2" Canvas.Left="{Binding XTexte}" Canvas.Top="{Binding YTexte}" MouseRightButtonDown="Transition_RightClick" Background="White" Panel.ZIndex="10">
-                            <TextBlock.RenderTransform>
-                                <RotateTransform Angle="{Binding AngleTexte}" />
-                            </TextBlock.RenderTransform>
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Opacity" Value="0.6"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Opacity" Value="1"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Canvas>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                                        <Polygon Points="{Binding FlechePoints}" Fill="Black" Visibility="{Binding IsLoop, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <TextBlock Text="{Binding Condition}" FontSize="14" Padding="2" Canvas.Left="{Binding XTexte}" Canvas.Top="{Binding YTexte}" MouseRightButtonDown="Transition_RightClick" Background="White" Panel.ZIndex="10">
+                                            <TextBlock.RenderTransform>
+                                                <RotateTransform Angle="{Binding AngleTexte}" />
+                                            </TextBlock.RenderTransform>
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Opacity" Value="0.6"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Opacity" Value="1"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Canvas>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
         <!-- Barre d'outils -->
         <Border CornerRadius="12" Background="{DynamicResource App.Secondary}" Padding="8"
