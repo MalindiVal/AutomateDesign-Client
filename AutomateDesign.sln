@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.2.11415.280 d18.0
+VisualStudioVersion = 18.2.11415.280
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicLayer", "LogicLayer\LogicLayer.csproj", "{F8877FAA-5278-4DD6-A62D-5DE6D6553694}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientData", "Data\ClientDa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVM", "TestVM\TestVM.csproj", "{86C019E4-BE51-4127-86A0-387BA7C11371}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{D66A7E7E-9CF1-401C-BAFA-BD1FCE1ADC1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService", "Service\ClientService.csproj", "{D66A7E7E-9CF1-401C-BAFA-BD1FCE1ADC1A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClientServices", "TestClientServices\TestClientServices.csproj", "{3E5C2539-0C2F-4BD4-817D-2AAC3D1B42CF}"
 EndProject
