@@ -6,11 +6,7 @@ AutomateDesign est un projet qui consiste en la création d'un schéma d'automat
 1. [Objectif du projet](#objectif-du-projet)
 
 2. [Fonctionnalités](#fonctionnalités)
-   - 2.1. [Côté Client (IHM WPF)](#côté-client-ihm-wpf)
-   - 2.2. [Côté Serveur (API ASP.NET)](#côté-serveur-api-aspnet)
-     - 2.2.1. [Contrôleur principal : AutomateController](#contrôleur-principal--automatecontroller)
-     - 2.2.2. [Contrôleur des utilisateurs : UtilisateurController](#contrôleur-des-utilisateurs--utilisateurcontroller)
-
+   
 3. [Guide d'utilisation](#guide-dutilisation)
    - 3.1. [Ouvrir l'éditeur](#ouvrir-léditeur)
    - 3.2. [Créer un État](#créer-un-etat)
@@ -30,23 +26,10 @@ AutomateDesign est un projet qui consiste en la création d'un schéma d'automat
 4. [Installation & exécution](#installation--exécution)
    - 4.1. [Prérequis](#prérequis)
    - 4.2. [Cloner le dépôt](#cloner-le-dépôt)
-   - 4.3. [Lancer l'API](#lancer-lapi)
    - 4.4. [Lancer le client WPF](#lancer-le-client-wpf)
-   - 4.5. [Lancer le client et l'API](#lancer-le-client-et-lapi)
    - 4.6. [Configuration de la connexion Client-API](#configuration-de-la-connexion-client-api)
-   - 4.7 [Hébergement de l'API](#hébergement-de-lapi)
-      - 4.7.1 [Installer Docker Desktop](#installer-docker-desktop)
-      - 4.7.2 [Installer un sous-systeme WSL](#installer-un-sous-systeme-wsl)
-      - 4.7.3 [Lier Docker Desktop à la distribution Linux](#lier-docker-desktop-à-la-distribution-linux)
-      - 4.7.4 [Lancer l'API en Mode Release](#lancer-lapi-en-mode-release)
-      - 4.7.5 [Récupération de l'image de l'API](#récupération-de-limage-de-lapi)
-      - 4.7.6 [Connexion sur Portainer](#connexion-sur-portainer)
-      - 4.7.5 [Importation d'une Image](#importation-d-une-image)
-      - 4.7.5 [Création d'un container](#création-dun-container)
-      - 4.7.5 [Récupération du certificat](#récupération-du-certificat)
-
+   
 5. [Structure du Projet](#structure-du-projet)
-   - 5.1[MCD (Modele conceptuelle des données)](#mcd-modele-conceptuelle-des-données)
 
 # Objectif du projet
 Le but d’AutomateDesign est de fournir un outil intuitif permettant de :
