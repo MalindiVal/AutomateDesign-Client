@@ -19,14 +19,13 @@ namespace ClientData.Realisations
         /// <inheritdoc/>
         public async Task<Automate> AddAutomate(Automate automate)
         {
-            if(automate.Utilisateur == null)
-            {
-                throw new DAOError("Veuillez vous connecter avant de réaliser une exportation en ligne");
-            }
-
-            // Conversion de l'automate en DTO pour l'envoi
+            Automate res = automate;
             AutomateDto dtoToSend = AutomateDto.FromDomain(automate);
-
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
+            SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.PostAsync("Automate/ExportAutomate", dtoToSend);
             if (reponseHttp.IsSuccessStatusCode)
             {
@@ -35,17 +34,24 @@ namespace ClientData.Realisations
 
                 if (dtoBack == null)
                     throw new DAOError("Réponse invalide lors de l'ajout de l'automate.");
-                return dtoBack.ToDomain();
+                res = dtoBack.ToDomain();
             } else
             {
-                throw new DAOError("Le nom " + automate.Nom + " existe déja");
+                throw new DAOError("Une erreur s'est produit lors de l'exportation de l'automate ");
             }
+
+                return res;
         }
 
         /// <inheritdoc/>
         public async Task<List<Automate>> GetAllAutomates()
         {
             List<Automate> list = new List<Automate>();
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
+            SetToken(UtilisateurDAO.Token);
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomates");
 
             if (reponseHttp.IsSuccessStatusCode)
@@ -60,10 +66,15 @@ namespace ClientData.Realisations
         }
 
         /// <inheritdoc/>
-        public async Task<List<Automate>> GetAllAutomatesByUser(Utilisateur user)
+        public async Task<List<Automate>> GetAllAutomatesByUser()
         {
             List<Automate> list = new List<Automate>();
-            HttpResponseMessage reponseHttp = await this.PostAsync("Automate/GetAllAutomatesByUser",user);
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
+            SetToken(UtilisateurDAO.Token);
+            HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAllAutomatesByUser");
 
             if (reponseHttp.IsSuccessStatusCode)
             {
@@ -80,6 +91,11 @@ namespace ClientData.Realisations
         public async Task<Automate> GetAutomate(int id)
         {
             Automate a = new Automate();
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
+            SetToken(UtilisateurDAO.Token);
             a.Id = id;
             HttpResponseMessage reponseHttp = await this.GetAsync("Automate/GetAutomateById?id=" + id);
             if (reponseHttp.IsSuccessStatusCode)
@@ -97,16 +113,17 @@ namespace ClientData.Realisations
         /// <inheritdoc/>
         public async Task<Automate> UpdateAutomate(Automate automate)
         {
+            if (UtilisateurDAO.Token == null)
+            {
+                throw new DAOError("Veuillez vous connectez");
+            }
+
             if (!automate.Id.HasValue)
             {
                 throw new DAOError("L'automate doit avoir un ID pour être mis à jour");
             }
 
-            if (automate.Utilisateur == null)
-            {
-                throw new DAOError("L'automate doit avoir un ID pour être mis à jour");
-            }
-
+            SetToken(UtilisateurDAO.Token);
             AutomateDto dtoToSend = AutomateDto.FromDomain(automate);
 
             HttpResponseMessage response = await this.PutAsync($"Automate/UpdateAutomate", dtoToSend);

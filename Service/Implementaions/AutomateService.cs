@@ -48,10 +48,10 @@ namespace Service.Implementaions
             return await automateDAO.GetAllAutomates();
         }
 
-        public async Task<List<Automate>> GetAllAutomatesByUser(Utilisateur user)
+        public async Task<List<Automate>> GetAllAutomatesByUser()
         {
             List<Automate> list = new List<Automate>();
-            list = await automateDAO.GetAllAutomatesByUser(user);
+            list = await automateDAO.GetAllAutomatesByUser();
             return list;
         }
 

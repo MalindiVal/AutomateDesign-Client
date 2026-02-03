@@ -25,7 +25,7 @@ namespace ClientData.Interfaces
         /// <param name="user">Utilisateur</param>
         /// <returns>Liste des automate</returns>
         /// <exception cref="DAOError">Une erreur s'est produit dans le dao</exception>
-        Task<List<Automate>> GetAllAutomatesByUser(Utilisateur user);
+        Task<List<Automate>> GetAllAutomatesByUser();
 
         /// <summary>
         /// Récupération d'un automate

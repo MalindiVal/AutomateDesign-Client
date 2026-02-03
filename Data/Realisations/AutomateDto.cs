@@ -31,11 +31,6 @@ namespace ClientData.Realisations
         /// Liste des transitions de l'automate.
         /// </summary>
         public List<Transition> Transitions { get; set; } = new();
-
-        /// <summary>
-        /// Utilisateur propriétaire de l'automate.
-        /// </summary>
-        public Utilisateur? Utilisateur { get; set; }
         #endregion
 
         #region Méthodes
@@ -52,7 +47,6 @@ namespace ClientData.Realisations
                 Nom = automate.Nom,
                 Etats = automate.Etats.ToList(),
                 Transitions = automate.Transitions.ToList(),
-                Utilisateur = automate.Utilisateur
             };
         }
 
@@ -65,8 +59,7 @@ namespace ClientData.Realisations
             var auto = new Automate
             {
                 Id = this.Id,
-                Nom = this.Nom,
-                Utilisateur = this.Utilisateur
+                Nom = this.Nom
             };
 
             foreach (var e in Etats)
