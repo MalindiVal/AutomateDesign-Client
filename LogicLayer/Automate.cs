@@ -82,24 +82,6 @@ namespace LogicLayer
 
         #region Methodes
         /// <summary>
-        /// Supression d'un etat
-        /// </summary>
-        /// <param name="etat">Eta à supprimer</param>
-        public void SupprimerEtat(Etat etat)
-        {
-            this.etats.Remove(etat);
-
-            // On récupère toutes les transitions concernées
-            List<Transition> aSupprimer = this.transitions.Where(t => t.EtatFinal == etat || t.EtatDebut == etat).ToList();
-
-            // On les supprime ensuite
-            foreach (Transition t in aSupprimer)
-            {
-                this.transitions.Remove(t);
-            }
-        }
-
-        /// <summary>
         /// Ajout d'un état à l'automate.
         /// </summary>
         /// <param name="e">Etat à ajouter.</param>
@@ -110,31 +92,6 @@ namespace LogicLayer
         /// </summary>
         /// <param name="t">Transition à ajouter.</param>
         public void AjouterTransition(Transition t) => transitions.Add(t);
-
-        /// <summary>
-        /// Suppression d'une transition de l'automate.
-        /// </summary>
-        /// <param name="t">Transition à supprimer.</param>
-        public void SupprTransition(Transition t) => transitions.Remove(t);
-
-        /// inheritdoc/>
-        public override bool Equals(object? obj)
-        {
-            bool res;
-
-            if (obj is not Automate other)
-            {
-                res = false;
-            }
-            else
-            {
-                res = Id == other.Id &&
-                   Nom == other.Nom &&
-                   Etats.SequenceEqual(other.Etats) &&
-                   Transitions.SequenceEqual(other.Transitions);
-            }
-            return res;
-        }
         #endregion
     }
 }

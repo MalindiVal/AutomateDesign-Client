@@ -10,6 +10,10 @@
         /// </summary>
         /// <param name="rootElement">Elément visuel WPF contenant l'automate.</param>
         /// <param name="filePath">Chemin d'enregistrement de l'image.</param>
-        void SaveAutomatonAsImage(object rootElement, string filePath);
+        void SaveAutomatonAsImage( IEnumerable<EtatData> etats, IEnumerable<TransitionData> transitions, string filePath);
     }
+
+    public record EtatData(double X, double Y, double Radius, bool EstFinal, double EtatFinalRadius);
+    public record TransitionData(double XTexte, double YTexte, string Condition);
+
 }

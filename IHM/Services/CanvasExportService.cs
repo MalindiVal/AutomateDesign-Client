@@ -14,7 +14,7 @@ namespace IHM.Services
     /// </summary>
     public class CanvasExportService : ICanvasExportService
     {
-        public void SaveAutomatonAsImage(object rootElement, string filePath)
+        public void SaveAutomatonAsImage(IEnumerable<EtatData> etats, IEnumerable<TransitionData> transitions, string filePath)
         {
             // Calcul du bounding box
             double minX = double.PositiveInfinity;
@@ -22,95 +22,93 @@ namespace IHM.Services
             double maxX = double.NegativeInfinity;
             double maxY = double.NegativeInfinity;
 
-            if (rootElement is FrameworkElement fe)
+            foreach (EtatData etat in etats)
             {
-                // Récupération des ItemsControls
-                List<ItemsControl> itemsControls =
-                    FindVisualChildren<ItemsControl>(fe).ToList();
+                double r = etat.EstFinal ? etat.EtatFinalRadius : etat.Radius;
 
-                ItemsControl? etatsControl = itemsControls.FirstOrDefault(ic => ic.Items.SourceCollection?.OfType<EtatVM>().Any() == true);
-                ItemsControl? etatsClone = null;
-                if (etatsControl != null)
-                {
-                    etatsClone = CloneItemsControl(etatsControl);
-                    foreach (EtatVM etat in etatsClone.Items.SourceCollection)
-                    {
-                        double r = etat.EstFinal ? etat.EtatFinalRadius : etat.EtatRadius;
+                double left = etat.X - r;
+                double right = etat.X + r;
+                double top = etat.Y - r;
+                double bottom = etat.Y + r;
 
-                        double left = etat.X - r;
-                        double right = etat.X + r;
-                        double top = etat.Y - r;
-                        double bottom = etat.Y + r;
-
-                        minX = Math.Min(minX, left);
-                        minY = Math.Min(minY, top);
-                        maxX = Math.Max(maxX, right);
-                        maxY = Math.Max(maxY, bottom);
-                    }
-                }
-
-
-                ItemsControl? transitionsControl = itemsControls.FirstOrDefault(ic => ic.Items.SourceCollection?.OfType<TransitionVM>().Any() == true);
-                ItemsControl? transitionsClone = null;
-                if (transitionsControl != null)
-                {
-                    transitionsClone = CloneItemsControl(transitionsControl);
-
-                    foreach (TransitionVM transition in transitionsClone.Items.SourceCollection)
-                    {
-                        double r = transition.Metier?.Condition != null ? transition.Metier.Condition.Count() * 10 : 10;
-
-                        double left = transition.XTexte - r;
-                        double right = transition.XTexte + r;
-                        double top = transition.YTexte - r;
-                        double bottom = transition.YTexte + r;
-
-                        minX = Math.Min(minX, left);
-                        minY = Math.Min(minY, top);
-                        maxX = Math.Max(maxX, right);
-                        maxY = Math.Max(maxY, bottom);
-                    }
-                }
-
-                // Dimensions de l'image
-                double offsetX = minX < 0 ? -minX : -minX;
-                double offsetY = minY < 0 ? -minY : -minY;
-
-                double width = Math.Max(1, maxX - minX);
-                double height = Math.Max(1, maxY - minY);
-
-                // Création du conteneur temporaire
-                Grid container = new Grid
-                {
-                    Width = width,
-                    Height = height,
-                    Background = Brushes.White
-                };
-                if (etatsControl != null)
-                {
-                    ApplyTranslation(etatsClone, offsetX, offsetY);
-                    container.Children.Add(etatsClone);
-                }
-                    
-
-                if (transitionsControl != null)
-                {
-                    ApplyTranslation(transitionsClone, offsetX, offsetY);
-                    container.Children.Add(transitionsClone);
-                }
-
-                // Mise en forme
-                container.Measure(new Size(width, height));
-                container.Arrange(new Rect(0, 0, width, height));
-                container.UpdateLayout();
-
-                Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
-
-                // Export
-                RenderAndSave(container, width, height, filePath);
+                minX = Math.Min(minX, left);
+                minY = Math.Min(minY, top);
+                maxX = Math.Max(maxX, right);
+                maxY = Math.Max(maxY, bottom);
             }
 
-            
+
+            foreach (TransitionData transition in transitions)
+            {
+                double r = transition.Condition != null ? transition.Condition.Count() * 10 : 10;
+
+                double left = transition.XTexte - r;
+                double right = transition.XTexte + r;
+                double top = transition.YTexte - r;
+                double bottom = transition.YTexte + r;
+
+                minX = Math.Min(minX, left);
+                minY = Math.Min(minY, top);
+                maxX = Math.Max(maxX, right);
+                maxY = Math.Max(maxY, bottom);
+            }
+
+            // Dimensions de l'image
+            double offsetX = minX < 0 ? -minX : -minX;
+            double offsetY = minY < 0 ? -minY : -minY;
+
+            double width = Math.Max(1, maxX - minX);
+            double height = Math.Max(1, maxY - minY);
+
+            // Création du conteneur temporaire
+            Canvas container = new Canvas
+            {
+                Width = width,
+                Height = height,
+                Background = Brushes.White
+            };
+
+            foreach (var etat in etats)
+            {
+                double radius = etat.EstFinal ? etat.EtatFinalRadius : etat.Radius;
+                var ellipse = new System.Windows.Shapes.Ellipse
+                {
+                    Width = radius * 2,
+                    Height = radius * 2,
+                    Stroke = Brushes.Black,
+                    Fill = Brushes.LightGray
+                };
+
+                Canvas.SetLeft(ellipse, etat.X + offsetX - radius);
+                Canvas.SetTop(ellipse, etat.Y + offsetY - radius);
+                container.Children.Add(ellipse);
+            }
+
+            // --- Draw transition texts ---
+            foreach (var transition in transitions)
+            {
+                var textBlock = new TextBlock
+                {
+                    Text = string.Join(",", transition.Condition ?? " "),
+                    Foreground = Brushes.Black
+                };
+
+                Canvas.SetLeft(textBlock, transition.XTexte + offsetX);
+                Canvas.SetTop(textBlock, transition.YTexte + offsetY);
+                container.Children.Add(textBlock);
+            }
+
+            // Mise en forme
+            container.Measure(new Size(width, height));
+            container.Arrange(new Rect(0, 0, width, height));
+            container.UpdateLayout();
+
+            Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
+            // Export
+            RenderAndSave(container, width, height, filePath);
+
+
         }
 
         #region Helpers

@@ -749,9 +749,8 @@ namespace ViewModels
         /// <summary>
         /// Exporte l’automate courant selon les options choisies par l’utilisateur.
         /// </summary>
-        /// <param name="rootElement">objet de type grid utilisé pour l'export en image</param>
         /// <returns></returns>
-        public async Task ExportAsync(object rootElement)
+        public async Task ExportAsync()
         {
             string notificationMessage = string.Empty;
             
@@ -769,7 +768,7 @@ namespace ViewModels
                     }
                     else if (mode == ExportAction.Image)
                     {
-                        ExportImage(rootElement);
+                        ExportImage();
                     } else if (mode == ExportAction.CSharp)
                     {
                         ExportCSharp();
@@ -784,7 +783,7 @@ namespace ViewModels
             }
         }
 
-        private void ExportImage(object rootElement)
+        private void ExportImage()
         {
             string notificationMessage = string.Empty;
 
@@ -795,7 +794,10 @@ namespace ViewModels
 
             if (!string.IsNullOrWhiteSpace(filePath))
             {
-                canvasExportService.SaveAutomatonAsImage(rootElement, filePath);
+                var etatsData = Etats.Select(e => new EtatData(e.X, e.Y, e.EtatRadius, e.EstFinal, e.EtatFinalRadius));
+                var transitionsData = Transitions.Select(t => new TransitionData(t.XTexte, t.YTexte, t.Metier?.Condition ?? "Vide"));
+
+                canvasExportService.SaveAutomatonAsImage(etatsData, transitionsData, filePath);
                 notificationMessage = "L'automate a été enregistré en image sur " + filePath;
                 ShowNotification(notificationMessage, false);
             }
