@@ -49,7 +49,6 @@ namespace Service.Implementaions
             {
                 Id = dto.Id,
                 Nom = dto.Nom,
-                Utilisateur = dto.Utilisateur
             };
 
             // Hydratation des états
@@ -79,7 +78,6 @@ namespace Service.Implementaions
             {
                 Id = automate.Id,
                 Nom = automate.Nom,
-                Utilisateur = automate.Utilisateur,
                 Etats = automate.Etats.ToList(),
                 Transitions = automate.Transitions.ToList()
             };
