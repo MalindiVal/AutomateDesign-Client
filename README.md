@@ -1,6 +1,8 @@
 # AutomateDesign
 AutomateDesign est un projet qui consiste en la création d'un schéma d'automate avec ses états et ses transitions
 
+Ce projet est liée à un autre projet qui contient l'api pour le projet : https://github.com/MalindiVal/AutomateDesign-API
+
 # Table des matières
 
 1. [Objectif du projet](#objectif-du-projet)
