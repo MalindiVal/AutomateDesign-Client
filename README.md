@@ -1,7 +1,9 @@
 # AutomateDesign
-AutomateDesign est un projet qui consiste en la création d'un schéma d'automate avec ses états et ses transitions
+AutomateDesign est un projet visant à créer un schéma interactif d'automate, avec visualisation de ses états et transitions. L’objectif est de faciliter la conception et la compréhension des automates finis à des fins pédagogiques ou de prototypage.
 
-Ce projet est liée à un autre projet qui contient l'api pour le projet : https://github.com/MalindiVal/AutomateDesign-API
+Ce projet est issu d’une SAE (Situation d’Apprentissage et d’Évaluation) réalisée à l’IUT de Dijon.
+
+💡 Note : Ce projet est lié à une API dédiée, disponible ici : [AutomateDesign-API](https://github.com/MalindiVal/AutomateDesign-API), qui gère la logique serveur, le stockage et les interactions avec les automates.
 
 # Table des matières
 
