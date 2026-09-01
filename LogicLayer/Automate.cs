@@ -81,6 +81,20 @@ namespace LogicLayer
         #endregion
 
         #region Methodes
+
+        public AutomateMemento Save()
+        {
+            return new AutomateMemento(nom, etats, transitions);
+        }
+
+        public void Restore(AutomateMemento m)
+        {
+            this.nom = m.nom;
+            this.etats = m.etats;
+            this.transitions = m.transitions;
+        }
+
+
         /// <summary>
         /// Supression d'un etat
         /// </summary>
