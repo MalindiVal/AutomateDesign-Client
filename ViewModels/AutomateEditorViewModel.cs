@@ -41,6 +41,8 @@ namespace ViewModels
         private ICommand toolState;
         private ICommand toolFinalState;
         private ICommand saveCommand;
+        private ICommand undoCommand;
+        private ICommand redoCommand;
         #endregion
 
 
@@ -70,6 +72,8 @@ namespace ViewModels
         /// La commande pour la sauvegarde de l'automade
         /// </summary>
         public ICommand SaveCommand { get => saveCommand; set => saveCommand = value; }
+        public ICommand UndoCommand { get => undoCommand; set => undoCommand = value; }
+        public ICommand RedoCommand { get => redoCommand; set => redoCommand = value; }
 
         #endregion
 
@@ -269,6 +273,8 @@ namespace ViewModels
             ToolState = new RelayCommand(() => SwitchTools(TypeEtat.Normal));
             ToolFinalState = new RelayCommand(() => SwitchTools(TypeEtat.Final));
             SaveCommand = new RelayCommand(SauvegardeAutomate);
+            UndoCommand = new RelayCommand(() => automate.Undo());
+            //RedoCommand = new RelayCommand(() => automate.Redo());
         }
         #endregion
 
@@ -361,7 +367,7 @@ namespace ViewModels
         /// <param name="y">position y du laché</param>
         public void RealeaseEtat(double x, double y)
         {
-            if (CurrentTool != TypeEtat.Transition)
+            if (CurrentTool != TypeEtat.Transition && draggedEtat != null)
             {
 
                 if (CheckOverlap(x, y))
@@ -730,7 +736,11 @@ namespace ViewModels
         /// <param name="automate">Automate à charger.</param>
         public void LoadAutomate(Automate? automate)
         {
-            this.automate = new AutomateVM(automate) ?? new AutomateVM(new Automate());
+            if(automate == null)
+            {
+                automate = new Automate();
+            }
+            this.automate = new AutomateVM(automate);
 
             this.automate.RecupAutomate();
         }
