@@ -1,49 +1,22 @@
 ﻿using LogicLayer;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModels
 {
     public class AutomateVM : BaseViewModel
     {
-        private Automate metier;
-
-        private readonly ObservableCollection<EtatVM> etats = new();
-        private readonly ObservableCollection<TransitionVM> transitions = new();
+        private readonly AutomateKeeper keeper;
         private double etatRadius = 75;
         private string title;
 
+        public Automate Metier { get; set; }
 
-        /// <summary>
-        /// Liste des etats contenus dans le canvas
-        /// </summary>
-        public ObservableCollection<EtatVM> Etats => etats;
-
-        /// <summary>
-        /// Liste des transitions
-        /// </summary>
-        public ObservableCollection<TransitionVM> Transitions => transitions;
-
-        public Automate Metier
-        {
-            get => metier;
-            set
-            {
-                metier = value;
-                OnPropertyChanged();
-            }
-        }
+        public ObservableCollection<EtatVM> Etats { get; } = new();
+        public ObservableCollection<TransitionVM> Transitions { get; } = new();
 
         public double EtatRadius
         {
-            get
-            {
-                return etatRadius;
-            }
+            get => etatRadius;
             set
             {
                 etatRadius = value;
@@ -51,7 +24,8 @@ namespace ViewModels
             }
         }
 
-        public string Title { 
+        public string Title
+        {
             get => title;
             set
             {
@@ -63,245 +37,193 @@ namespace ViewModels
         public AutomateVM(Automate automate)
         {
             Metier = automate;
-            foreach (var etat in automate.Etats)
-            {
-                Etats.Add(new EtatVM(etat));
-            }
-            foreach (var transition in automate.Transitions)
-            {
-                var etatDebutVM = Etats.First(e => e.Metier == transition.EtatDebut);
-                var etatFinalVM = Etats.First(e => e.Metier == transition.EtatFinal);
-                Transitions.Add(new TransitionVM(etatDebutVM, etatFinalVM, transition));
-            }
+            keeper = new AutomateKeeper();
+            keeper.Keep(Metier);
 
+            RecupAutomate();
         }
 
-        #region Gestion Etats
+        // -------------------------
+        // Undo
+        // -------------------------
 
-        /// <summary>
-        /// Ajoute un état à l’automate.
-        /// </summary>
-        /// <param name="x">Coordonnée X du centre de l’état</param>
-        /// <param name="y">Coordonnée Y du centre de l’état</param>
+        public void Undo()
+        {
+            keeper.Undo();
+            RecupAutomate();
+        }
+
+        // -------------------------
+        // Etats
+        // -------------------------
+
         public void AjouterEtatNormal(double x, double y)
         {
-            HashSet<int> indicesUtilises = new HashSet<int>();
-            foreach (EtatVM e in Etats)
-            {
-                if (e.Nom.StartsWith("Etat "))
-                {
-                    string nombreTexte = e.Nom.Substring("Etat ".Length);
-                    if (int.TryParse(nombreTexte, out int n))
-                        indicesUtilises.Add(n);
-                }
-            }
-            int indexLibre = 0;
-            while (indicesUtilises.Contains(indexLibre))
-                indexLibre++;
-            Etat etat = new Etat
-            {
-                Nom = $"Etat {indexLibre}",
-                Position = new Position(x, y),
-                EstInitial = false,
-                EstFinal = false
-            };
-            Etats.Add(new EtatVM(etat) { EtatRadius = EtatRadius });
+            AjouterEtat(x, y, false, false);
         }
 
         public void AjouterEtatInitial(double x, double y)
         {
-            EtatVM? ancienInitial = Etats.FirstOrDefault(e => e.EstInitial);
-            if (ancienInitial != null)
-                ancienInitial.EstInitial = false;
-            HashSet<int> indicesUtilises = new HashSet<int>();
-            foreach (EtatVM e in Etats)
-            {
-                if (e.Nom.StartsWith("Etat "))
-                {
-                    string nombreTexte = e.Nom.Substring("Etat ".Length);
-                    if (int.TryParse(nombreTexte, out int n))
-                        indicesUtilises.Add(n);
-                }
-            }
-            int indexLibre = 0;
-            while (indicesUtilises.Contains(indexLibre))
-                indexLibre++;
-            Etat etat = new Etat
-            {
-                Nom = $"Etat {indexLibre}",
-                Position = new Position(x, y),
-                EstInitial = true,
-                EstFinal = false
-            };
-            Etats.Add(new EtatVM(etat) { EtatRadius = EtatRadius });
+            foreach (var etat in Etats)
+                etat.EstInitial = false;
 
+            AjouterEtat(x, y, true, false);
         }
 
         public void AjouterEtatFinal(double x, double y)
         {
-            HashSet<int> indicesUtilises = new HashSet<int>();
-            foreach (EtatVM e in Etats)
-            {
-                if (e.Nom.StartsWith("Etat "))
-                {
-                    string nombreTexte = e.Nom.Substring("Etat ".Length);
-                    if (int.TryParse(nombreTexte, out int n))
-                        indicesUtilises.Add(n);
-                }
-            }
-            int indexLibre = 0;
-            while (indicesUtilises.Contains(indexLibre))
-                indexLibre++;
+            AjouterEtat(x, y, false, true);
+        }
+
+        private void SaveState()
+        {
+            ConstruireAutomateDepuisVM();
+            keeper.Do();
+        }
+        private void AjouterEtat(
+            double x,
+            double y,
+            bool initial,
+            bool final)
+        {
             Etat etat = new Etat
             {
-                Nom = $"Etat {indexLibre}",
+                Nom = NouveauNomEtat(),
                 Position = new Position(x, y),
-                EstInitial = false,
-                EstFinal = true
+                EstInitial = initial,
+                EstFinal = final
             };
-            Etats.Add(new EtatVM(etat) { EtatRadius = EtatRadius });
 
+            Etats.Add(new EtatVM(etat)
+            {
+                EtatRadius = EtatRadius
+            });
+
+            this.SaveState();
         }
 
-        /// <summary>
-        /// Vérifie si une position chevauche un autre état ou sort du canvas.
-        /// </summary>
-        /// <param name="x">Coordonnée X</param>
-        /// <param name="y">Coordonnée Y</param>
-        /// <returns>True si chevauchement ou hors limites, false sinon</returns>
+        private string NouveauNomEtat()
+        {
+            int index = 0;
+
+            while (Etats.Any(e => e.Nom == $"Etat {index}"))
+                index++;
+
+            return $"Etat {index}";
+        }
+
         public bool CheckOverlap(double x, double y)
         {
-            bool res = false;
-            foreach (EtatVM evm in Etats)
+            return Etats.Any(e => e.CheckOverlap(x, y));
+        }
+
+        public void SupprimerEtat(EtatVM etat)
+        {
+            this.SaveState();
+
+            foreach (var transition in Transitions
+                .Where(t => t.EtatDepart == etat || t.EtatArrivee == etat)
+                .ToList())
             {
-                res = evm.CheckOverlap(x, y);
-                if (res)
-                {
-                    break;
-                }
+                SupprimerTransition(transition);
             }
 
-            return res;
+            Etats.Remove(etat);
         }
 
-        /// <summary>
-        /// Supprime un état et toutes ses transitions associées.
-        /// </summary>
-        /// <param name="evm">Etat à supprimer</param>
-        public void SupprimerEtat(EtatVM evm)
+        // -------------------------
+        // Transitions
+        // -------------------------
+
+        public void AjouterTransition(EtatVM debut, EtatVM fin)
         {
-            List<TransitionVM> transitionsASupprimer = new List<TransitionVM>();
-            transitionsASupprimer = Transitions.Where(t => t.EtatDepart == evm || t.EtatArrivee == evm).ToList();
+            this.SaveState();
+            var transition = new TransitionVM(debut, fin);
 
+            debut.TransitionsOut.Add(transition);
+            fin.TransitionsIn.Add(transition);
 
-            foreach (TransitionVM t in transitionsASupprimer)
-                Transitions.Remove(t);
-
-            Etats.Remove(evm);
-        }
-
-
-        #endregion
-
-        #region Gestion des Transitions
-
-        /// <summary>
-        /// Ajoute une transition entre deux états.
-        /// </summary>
-        /// <param name="start">Etat de départ</param>
-        /// <param name="end">Etat d’arrivée</param>
-        public void AjouterTransition(EtatVM start, EtatVM end)
-        {
-            TransitionVM nouvelleTransition = new TransitionVM(start, end);
-
-            // Calculer index et total AVANT d'ajouter
-            // Ajout aux listes
-            start.TransitionsOut.Add(nouvelleTransition);
-            end.TransitionsIn.Add(nouvelleTransition);
-
-            // previousTransition
-            TransitionVM? previous = start.TransitionsOut
-                .Where(t => t.EtatArrivee == end && t != nouvelleTransition)
+            transition.PreviousTransition = debut.TransitionsOut
+                .Where(t => t.EtatArrivee == fin && t != transition)
                 .LastOrDefault();
-            nouvelleTransition.PreviousTransition = previous;
 
-            // Génération condition
-            HashSet<int> indicesUtilises = new HashSet<int>();
-            foreach (TransitionVM t in Transitions)
-            {
-                if (t.Condition.Replace(" ","_").StartsWith("Condition_"))
-                {
-                    string nombreTexte = t.Condition.Substring("Condition ".Length);
-                    if (int.TryParse(nombreTexte, out int n))
-                        indicesUtilises.Add(n);
-                }
-            }
+            transition.Condition = NouveauNomCondition();
 
-            int indexLibre = 0;
-            while (indicesUtilises.Contains(indexLibre)) indexLibre++;
-            nouvelleTransition.Condition = "Condition " + indexLibre;
+            Transitions.Add(transition);
 
-            // Ajout final
-            Transitions.Add(nouvelleTransition);
-            nouvelleTransition.RefreshGeometry();
+            transition.RefreshGeometry();
         }
 
-        /// <summary>
-        /// Supprime une transition.
-        /// </summary>
-        /// <param name="tvm">Transition à supprimer</param>
-        public void SupprimerTransition(TransitionVM tvm)
+        private string NouveauNomCondition()
         {
-            tvm.EtatDepart.TransitionsOut.Remove(tvm);
-            tvm.EtatArrivee.TransitionsIn.Remove(tvm);
-            Transitions.Remove(tvm);
+            int index = 0;
+
+            while (Transitions.Any(t => t.Condition == $"Condition {index}"))
+                index++;
+
+            return $"Condition {index}";
         }
 
-        #endregion
+        public void SupprimerTransition(TransitionVM transition)
+        {
+            this.SaveState();
+            transition.EtatDepart.TransitionsOut.Remove(transition);
+            transition.EtatArrivee.TransitionsIn.Remove(transition);
+
+            Transitions.Remove(transition);
+        }
+
+        // -------------------------
+        // Synchronisation
+        // -------------------------
 
         public void ConstruireAutomateDepuisVM()
         {
-            this.metier.Etats.Clear();
-            foreach (EtatVM etat in this.Etats)
-            {
-                this.metier.Etats.Add(etat.Metier);
-            }
-            this.metier.Transitions.Clear();
-            foreach (TransitionVM transition in this.Transitions)
-            {
-                this.metier.Transitions.Add(transition.Metier);
-            }
+            Metier.Etats.Clear();
+            Metier.Transitions.Clear();
+
+            foreach (var etat in Etats)
+                Metier.Etats.Add(etat.Metier);
+
+            foreach (var transition in Transitions)
+                Metier.Transitions.Add(transition.Metier);
         }
 
         public void RecupAutomate()
         {
-            Title = this.metier.Nom;
-            // D'abord créer tous les EtatVM
-            Dictionary<Etat, EtatVM> mapEtats = new Dictionary<Etat, EtatVM>();
-            Etats.Clear();
+            Title = Metier.Nom;
 
-            foreach (Etat etat in this.metier.Etats)
+            Etats.Clear();
+            Transitions.Clear();
+
+            var map = new Dictionary<Etat, EtatVM>();
+
+            foreach (var etat in Metier.Etats)
             {
-                EtatVM etatVM = new EtatVM(etat) { EtatRadius = EtatRadius };
-                Etats.Add(etatVM);
-                mapEtats[etat] = etatVM;
+                var vm = new EtatVM(etat)
+                {
+                    EtatRadius = EtatRadius
+                };
+
+                Etats.Add(vm);
+                map[etat] = vm;
             }
 
-            Transitions.Clear();
-            // Ensuite créer les TransitionVM avec les bonnes références
-            foreach (Transition t in this.metier.Transitions)
+            foreach (var transition in Metier.Transitions)
             {
-                if (mapEtats.TryGetValue(t.EtatDebut, out EtatVM debut) &&
-                    mapEtats.TryGetValue(t.EtatFinal, out EtatVM fin))
+                if (!map.TryGetValue(transition.EtatDebut, out var debut) ||
+                    !map.TryGetValue(transition.EtatFinal, out var fin))
+                    continue;
+
+                var vm = new TransitionVM(debut, fin, transition)
                 {
-                    TransitionVM transitionVM = new TransitionVM(debut, fin, t);
-                    transitionVM.Condition = t.Condition;
-                    Transitions.Add(transitionVM);
-                    debut.TransitionsOut.Add(transitionVM);
-                    fin.TransitionsIn.Add(transitionVM);
-                }
+                    Condition = transition.Condition
+                };
+
+                Transitions.Add(vm);
+                debut.TransitionsOut.Add(vm);
+                fin.TransitionsIn.Add(vm);
             }
         }
-
     }
 }
