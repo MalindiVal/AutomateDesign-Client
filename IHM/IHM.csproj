@@ -20,6 +20,7 @@
     <None Remove="images\icone_home.png" />
     <None Remove="images\icone_rename.png" />
     <None Remove="images\icone_save.png" />
+    <None Remove="images\icone_undo.png" />
     <None Remove="images\logo.png" />
     <None Remove="images\separation_line.png" />
     <None Remove="images\side_bar_sep.png" />
@@ -50,6 +51,7 @@
     <Resource Include="images\icone_home.png" />
     <Resource Include="images\icone_rename.png" />
     <Resource Include="images\icone_save.png" />
+    <Resource Include="images\icone_undo.png" />
     <Resource Include="images\logo.png" />
     <Resource Include="images\separation_line.png" />
     <Resource Include="images\side_bar_sep.png" />

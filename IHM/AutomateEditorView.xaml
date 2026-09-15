@@ -133,6 +133,22 @@
         Background="Transparent"
         SizeChanged="EditorCanvas_SizeChanged"/>
 
+        <StackPanel Orientation="Horizontal"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top"
+        Margin="12"
+        Panel.ZIndex="10" Cursor="">
+
+            <Button Style="{StaticResource button}"
+        Command="{Binding UndoCommand}"
+        ToolTip="Annuler"
+        Margin="0,0,8,0" Cursor="Hand">
+                <Image Source="pack://application:,,,/images/icone_undo.png"
+           Height="40" Stretch="Uniform"/>
+            </Button>
+        </StackPanel>
+
+
         <!-- Barre d'icônes en haut à droite -->
         <StackPanel Orientation="Horizontal"
                 HorizontalAlignment="Right"
