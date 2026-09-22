@@ -22,7 +22,11 @@ namespace LogicLayer
         }
         public void Undo()
         {
-            automate.Restore(states.Pop());
+            if (states.Count != 0)
+            {
+                automate.Restore(states.Pop());
+            }
+            
         }
     }
 }
