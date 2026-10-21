@@ -1,0 +1,75 @@
+# Publie une release GitHub contenant la build du client WPF (IHM.exe).
+#
+# Déclenchement :
+#   - push d'un tag de version :  git tag v1.0.0 && git push origin v1.0.0
+#   - ou manuellement depuis l'onglet Actions (en indiquant le tag à créer)
+#
+# Résultat : une release GitHub avec une archive AutomateDesign-<tag>-win-x64.zip
+# à décompresser, puis lancer IHM.exe (aucune installation de .NET requise).
+
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag de la release (ex : v1.0.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: AutomateDesign.sln
+      App_Project_Path: IHM/IHM.csproj
+      Runtime: win-x64
+      Tag: ${{ github.event.inputs.tag || github.ref_name }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore
+      run: dotnet restore $env:Solution_Name
+
+    - name: Execute unit tests
+      run: dotnet test $env:Solution_Name --configuration Release --no-restore
+
+    # Build autonome : l'utilisateur n'a pas besoin d'installer le runtime .NET
+    - name: Publish the WPF client
+      run: >
+        dotnet publish $env:App_Project_Path
+        --configuration Release
+        --runtime $env:Runtime
+        --self-contained true
+        --output publish/AutomateDesign
+
+    - name: Check publish output
+      run: |
+        foreach ($file in @("IHM.exe", "appsettings.json")) {
+          if (-not (Test-Path "publish/AutomateDesign/$file")) {
+            throw "$file est absent de la build publiée"
+          }
+        }
+
+    - name: Zip the build
+      run: Compress-Archive -Path publish/AutomateDesign -DestinationPath "AutomateDesign-$env:Tag-$env:Runtime.zip"
+
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.Tag }}
+        name: AutomateDesign ${{ env.Tag }}
+        generate_release_notes: true
+        files: AutomateDesign-${{ env.Tag }}-${{ env.Runtime }}.zip
