@@ -76,6 +76,12 @@ public class APIConfig
     /// <returns>Instance d'APIConfig contenant les paramètres chargés.</returns>
     public static APIConfig Load(string filePath = "appsettings.json")
     {
+        // Un chemin relatif est résolu depuis le dossier de l'exécutable,
+        // et non depuis le dossier courant (raccourci, lancement en ligne de commande…).
+        if (!Path.IsPathRooted(filePath))
+        {
+            filePath = Path.Combine(AppContext.BaseDirectory, filePath);
+        }
         string json = File.ReadAllText(filePath);
         using var doc = JsonDocument.Parse(json);
         var api = doc.RootElement.GetProperty("API");
