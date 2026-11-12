@@ -56,8 +56,6 @@ Aucune installation de .NET n'est nécessaire : l'archive embarque le runtime. E
 
 Au lancement, cliquez sur **« + Nouveau Automate »**.
 
-<img width="1260" height="759" alt="Écran d'accueil" src="https://github.com/user-attachments/assets/ea29fc38-3608-4edb-8634-cbae6b7c6c90" />
-
 ### Créer un état
 
 La barre d'outils propose trois types d'état :
@@ -66,23 +64,15 @@ La barre d'outils propose trois types d'état :
 - **État normal** (option 3, cercle simple) ;
 - **État final** (option 4, double cercle).
 
-<img width="221" height="71" alt="Barre d'outils" src="https://github.com/user-attachments/assets/c09101e1-ab0a-47da-bfc9-b453bd6c639b" />
-
 Sélectionnez un type, puis cliquez dans la zone de dessin pour placer l'état.
-
-![Création d'un état](https://github.com/user-attachments/assets/543d342e-ea71-4f21-9894-6db8268f19eb)
 
 ### Modifier un état
 
 Faites un **clic droit** sur un état pour ouvrir sa fenêtre de modification. Cette fenêtre permet aussi de le supprimer.
 
-<img width="336" height="190" alt="Modification d'un état" src="https://github.com/user-attachments/assets/d782f642-e282-4ebd-bb7d-fca89801e5a1" />
-
 ### Déplacer un état
 
 Maintenez le clic sur un état, déplacez la souris, puis relâchez à l'endroit voulu.
-
-![Déplacement d'un état](https://github.com/user-attachments/assets/07db7036-63ea-4cd0-9368-a4f21378a404)
 
 > Si l'état est relâché sur un autre état, il revient à sa position de départ.
 
@@ -90,33 +80,21 @@ Maintenez le clic sur un état, déplacez la souris, puis relâchez à l'endroit
 
 Sélectionnez l'outil flèche dans la barre d'outils, cliquez sur l'état de départ puis sur l'état d'arrivée. Appuyez sur **Échap** pour annuler la création en cours.
 
-![Création d'une transition](https://github.com/user-attachments/assets/f40ce0a2-b3e6-422f-9ac9-62913dbf3634)
-
 ### Modifier une transition
 
 Faites un **clic droit** sur une transition pour ouvrir sa fenêtre de modification. Cette fenêtre permet aussi de la supprimer.
-
-<img width="329" height="188" alt="Modification d'une transition" src="https://github.com/user-attachments/assets/6d21ae18-0462-405c-854e-79921a12d3cf" />
 
 ### Déplacer une transition
 
 Cliquez sur une transition : un point rouge apparaît. Faites-le glisser pour modifier la courbure de la transition.
 
-https://github.com/user-attachments/assets/e905a87b-8ddd-4060-8d24-2d237047a13d
-
 ### Sauvegarder un automate
 
 Cliquez sur **Enregistrer** pour sauvegarder l'automate au format JSON. Une notification verte confirme la réussite, une rouge signale un échec.
 
-<img width="1001" height="696" alt="Bouton Enregistrer" src="https://github.com/user-attachments/assets/de5c7665-e8a9-4fc0-b0ff-a084c0acf6ea" />
-
 ### Exporter un automate
 
 Cliquez sur **Exporter** pour ouvrir la fenêtre des options d'export.
-
-<img width="1001" height="696" alt="Bouton Exporter" src="https://github.com/user-attachments/assets/4bdd1c22-29bf-45b9-9571-78ed16be5512" />
-
-<img width="383" height="335" alt="Options d'export" src="https://github.com/user-attachments/assets/84aa2708-e855-473f-8354-5b13d84f09e3" />
 
 Trois options sont disponibles :
 
@@ -124,29 +102,15 @@ Trois options sont disponibles :
 - **Serveur distant** : envoie l'automate sur l'API (connexion requise) ;
 - **Fichiers C#** : génère les classes représentant l'automate (`.cs`).
 
-<img width="132" height="119" alt="Fichiers C# générés" src="https://github.com/user-attachments/assets/a45b67e7-a826-403a-ae29-6123be0298e2" />
-
 ### Importer un automate
 
 Depuis l'accueil, cliquez sur **« Importer un automate »**.
 
-<img width="1266" height="791" alt="Bouton Importer" src="https://github.com/user-attachments/assets/7058ce87-d390-4132-a2ce-39eed1cfec9e" />
-
-<img width="377" height="280" alt="Options d'import" src="https://github.com/user-attachments/assets/b7c31bc2-6197-45a9-8cf8-06205ff4a6fe" />
-
 **Depuis un fichier** — cliquez sur « Ouvrir un fichier » et choisissez un fichier `.json`.
 
-**Depuis le serveur** — cliquez sur « Récupérer un Automate », puis connectez-vous :
-
-<img width="1003" height="696" alt="Page de connexion" src="https://github.com/user-attachments/assets/1d12e83a-1768-4648-be5a-8ab1233561cf" />
-
-Pour l'instant, un seul compte est disponible : identifiant `root`, mot de passe `root`.
-
-<img width="540" height="313" alt="Connexion" src="https://github.com/user-attachments/assets/0b84a0e7-7225-4c97-a478-20b6c5f6b3e8" />
+**Depuis le serveur** — cliquez sur « Récupérer un Automate », puis connectez-vous et cliquez sur **Connexion**. Pour l'instant, un seul compte est disponible : identifiant `root`, mot de passe `root`.
 
 Choisissez un automate dans la liste puis cliquez sur **Importer**.
-
-<img width="1004" height="701" alt="Liste des automates" src="https://github.com/user-attachments/assets/455044d7-116d-4937-a963-435318bcc6e8" />
 
 > Le serveur est hébergé sur une offre gratuite : la première requête après une période d'inactivité peut prendre quelques dizaines de secondes.
 
