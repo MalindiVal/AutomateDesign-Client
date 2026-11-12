@@ -1,207 +1,237 @@
-# AutomateDesign
-AutomateDesign est un projet visant à créer un schéma interactif d'automate, avec visualisation de ses états et transitions. L’objectif est de faciliter la conception et la compréhension des automates finis à des fins pédagogiques ou de prototypage.
+# AutomateDesign — Client
 
-Ce projet est issu d’une SAE (Situation d’Apprentissage et d’Évaluation) réalisée à l’IUT de Dijon.
+[![CI](https://github.com/MalindiVal/AutomateDesign-Client/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/MalindiVal/AutomateDesign-Client/actions/workflows/dotnet-desktop.yml)
+[![Release](https://img.shields.io/github/v/release/MalindiVal/AutomateDesign-Client?include_prereleases)](https://github.com/MalindiVal/AutomateDesign-Client/releases/latest)
 
-💡 Note : Ce projet est lié à une API dédiée, disponible ici : [AutomateDesign-API](https://github.com/MalindiVal/AutomateDesign-API), qui gère la logique serveur, le stockage et les interactions avec les automates.
+AutomateDesign est une application de bureau (WPF, .NET 8) pour concevoir des automates à états finis de façon visuelle : création des états et des transitions, mise en forme du schéma, puis sauvegarde, export ou partage via un serveur. L'objectif est de faciliter la conception et la compréhension des automates, à des fins pédagogiques ou de prototypage.
 
-# Table des matières
+Ce projet est issu d'une SAE (Situation d'Apprentissage et d'Évaluation) réalisée à l'IUT de Dijon.
 
-1. [Objectif du projet](#objectif-du-projet)
+> 💡 Ce dépôt contient le **client**. La partie serveur (stockage des automates, comptes utilisateurs) se trouve dans le dépôt [AutomateDesign-API](https://github.com/MalindiVal/AutomateDesign-API).
 
-2. [Fonctionnalités](#fonctionnalités)
-   
+## Table des matières
+
+1. [Fonctionnalités](#fonctionnalités)
+2. [Installation (utilisateurs)](#installation-utilisateurs)
 3. [Guide d'utilisation](#guide-dutilisation)
-   - 3.1. [Ouvrir l'éditeur](#ouvrir-léditeur)
-   - 3.2. [Créer un État](#créer-un-etat)
-   - 3.3. [Modifier un état](#modifier-un-état)
-   - 3.4. [Déplacer un état](#déplacer-un-état)
-   - 3.5. [Créer une Transition](#créer-une-transition)
-   - 3.6. [Modifier une transition](#modifier-une-transition)
-   - 3.7. [Déplacer une transition](#déplacer-une-transition)
-   - 3.8. [Sauvegarder un Automate](#sauvegarde-un-automate)
-   - 3.9. [Exporter son Automate](#exporter-son-automate)
-     - 3.9.1. [En tant qu'image](#en-tant-quimage)
-     - 3.9.2. [Vers le serveur distant](#vers-le-serveur-distant)
-   - 3.10. [Importer un Automate](#importer-un-automate)
-     - 3.10.1. [Depuis un fichier](#depuis-un-fichier)
-     - 3.10.2. [Depuis le réseau](#depuis-le-réseau)
+   - [Ouvrir l'éditeur](#ouvrir-léditeur)
+   - [Créer un état](#créer-un-état)
+   - [Modifier un état](#modifier-un-état)
+   - [Déplacer un état](#déplacer-un-état)
+   - [Créer une transition](#créer-une-transition)
+   - [Modifier une transition](#modifier-une-transition)
+   - [Déplacer une transition](#déplacer-une-transition)
+   - [Sauvegarder un automate](#sauvegarder-un-automate)
+   - [Exporter un automate](#exporter-un-automate)
+   - [Importer un automate](#importer-un-automate)
+4. [Développement](#développement)
+   - [Prérequis](#prérequis)
+   - [Compiler et lancer](#compiler-et-lancer)
+   - [Tests](#tests)
+   - [Configuration de la connexion à l'API](#configuration-de-la-connexion-à-lapi)
+5. [Intégration continue et releases](#intégration-continue-et-releases)
+6. [Structure du projet](#structure-du-projet)
 
-4. [Installation & exécution](#installation--exécution)
-   - 4.1. [Prérequis](#prérequis)
-   - 4.2. [Cloner le dépôt](#cloner-le-dépôt)
-   - 4.4. [Lancer le client WPF](#lancer-le-client-wpf)
-   - 4.6. [Configuration de la connexion Client-API](#configuration-de-la-connexion-client-api)
-   
-5. [Structure du Projet](#structure-du-projet)
+## Fonctionnalités
 
-# Objectif du projet
-Le but d’AutomateDesign est de fournir un outil intuitif permettant de :
-- Concevoir visuellement des automates à états finis
-- Définir leurs transitions et propriétés
-- Sauvegarder et charger des automates depuis une base de données
-- Exporter les automates pour réutilisation dans d’autres applications.
+- Éditeur graphique interactif : états normaux, initial et finaux, transitions courbes
+- Modification et suppression des états et transitions
+- Sauvegarde et ouverture d'automates au format JSON
+- Export en image (PNG, JPG, BMP) ou en classes C# (`.cs`)
+- Envoi et récupération d'automates sur le serveur distant (avec authentification)
 
-Ce projet met en œuvre plusieurs technologies modernes de développement .NET (C#, WPF, ASP.NET, SQLite, Docker) afin de proposer une solution robuste et maintenable.
+## Installation (utilisateurs)
 
-# Fonctionnalités
-- Création et édition d’automates via une interface graphique interactive
-- Ajout, modification et suppression d’états et de transitions
-- Sauvegarde locale ou distante via l’API
+1. Téléchargez l'archive `AutomateDesign-<version>-win-x64.zip` depuis la [dernière release](https://github.com/MalindiVal/AutomateDesign-Client/releases/latest).
+2. Décompressez-la dans le dossier de votre choix.
+3. Lancez `IHM.exe`.
 
-# Guide d'utilisation
-## Démarrez le logiciel
-Reprenez le dossier compréssé dans les realease, décompresser le dans un dissier accessible, ouvrez le et cliquer sur l'executable nommé IHM.exe
-## Ouvrir l'éditeur
-Lorsque vous ouvrez l'executable cliquer sur "+ Nouveau Automate"
+Aucune installation de .NET n'est nécessaire : l'archive embarque le runtime. Elle est configurée pour utiliser l'API déployée (voir [Configuration](#configuration-de-la-connexion-à-lapi) pour la modifier).
 
-<img width="1260" height="759" alt="image" src="https://github.com/user-attachments/assets/ea29fc38-3608-4edb-8634-cbae6b7c6c90" />
+> Windows peut afficher un avertissement SmartScreen au premier lancement, l'exécutable n'étant pas signé : cliquez sur « Informations complémentaires » puis « Exécuter quand même ».
 
+## Guide d'utilisation
 
-## Créer un Etat
-Dans l'éditeur, vous pouvez choisir de créer un etat normal (Option 3 avec un cercle simple) ,un etat initial(Option 1 avec une fleche pointant vers un cercle)(Il ne peut en y avoir qu'un) et un etat final(Option 4 avec le double cercle). 
+### Ouvrir l'éditeur
 
-<img width="221" height="71" alt="image" src="https://github.com/user-attachments/assets/c09101e1-ab0a-47da-bfc9-b453bd6c639b" />
+Au lancement, cliquez sur **« + Nouveau Automate »**.
 
-Clique sur une de ces options puis cliquer sur la zone de dessin pour en créer un
-![Enregistrement 2025-11-13 143807](https://github.com/user-attachments/assets/543d342e-ea71-4f21-9894-6db8268f19eb)
+<img width="1260" height="759" alt="Écran d'accueil" src="https://github.com/user-attachments/assets/ea29fc38-3608-4edb-8634-cbae6b7c6c90" />
 
-## Modifier Un état
-Dans l'éditeur, vous pouvez modifier l'état en faisant un click droit pour ouvrir une fenetre de modification
+### Créer un état
 
-<img width="336" height="190" alt="image" src="https://github.com/user-attachments/assets/d782f642-e282-4ebd-bb7d-fca89801e5a1" />
+La barre d'outils propose trois types d'état :
 
-Il est également possible de supprimer un état depuis cette fenetre.
+- **État initial** (option 1, flèche pointant vers un cercle) — un seul par automate ;
+- **État normal** (option 3, cercle simple) ;
+- **État final** (option 4, double cercle).
 
-## Déplacer un état
-Les états sont aussi déplacables. Maintenez le clic sur un état et déplacer la souris pour déplacer l'état, relachez à un endroit qui vous satisfaira
+<img width="221" height="71" alt="Barre d'outils" src="https://github.com/user-attachments/assets/c09101e1-ab0a-47da-bfc9-b453bd6c639b" />
 
-![Enregistrement 2025-11-13 144319](https://github.com/user-attachments/assets/07db7036-63ea-4cd0-9368-a4f21378a404)
+Sélectionnez un type, puis cliquez dans la zone de dessin pour placer l'état.
 
-Remarque : Si un état se superpose sur un autre, l'etat retournera à son état initial
+![Création d'un état](https://github.com/user-attachments/assets/543d342e-ea71-4f21-9894-6db8268f19eb)
 
-## Créer une Transition
-Dans la barre à outils, vous pouvez choisir la flèche corespondant à la création des transitions
-Cliquez sur un etat qui sera l'etat de départ puis sur un autre état d'arivée.
-![Enregistrement 2025-11-13 144724](https://github.com/user-attachments/assets/f40ce0a2-b3e6-422f-9ac9-62913dbf3634)
-Vous pouvez annuler la création d'une transition en appuyant sur la touche echap.
+### Modifier un état
 
-## Modifier une transition
-Dans l'éditeur, vous pouvez modifier la transition en faisant un click droit pour ouvrir une fenetre de modification
+Faites un **clic droit** sur un état pour ouvrir sa fenêtre de modification. Cette fenêtre permet aussi de le supprimer.
 
-<img width="329" height="188" alt="image" src="https://github.com/user-attachments/assets/6d21ae18-0462-405c-854e-79921a12d3cf" />
+<img width="336" height="190" alt="Modification d'un état" src="https://github.com/user-attachments/assets/d782f642-e282-4ebd-bb7d-fca89801e5a1" />
 
-Il est également possible de supprimer une transition depuis cette fenetre.
+### Déplacer un état
 
-## Déplacer une transition
+Maintenez le clic sur un état, déplacez la souris, puis relâchez à l'endroit voulu.
 
-Lors que vous cliquer sur une transition, un point rouge s'affichera, maintenez le clic sur ce point vous permettra de modifier la trajectoire de la transition
+![Déplacement d'un état](https://github.com/user-attachments/assets/07db7036-63ea-4cd0-9368-a4f21378a404)
+
+> Si l'état est relâché sur un autre état, il revient à sa position de départ.
+
+### Créer une transition
+
+Sélectionnez l'outil flèche dans la barre d'outils, cliquez sur l'état de départ puis sur l'état d'arrivée. Appuyez sur **Échap** pour annuler la création en cours.
+
+![Création d'une transition](https://github.com/user-attachments/assets/f40ce0a2-b3e6-422f-9ac9-62913dbf3634)
+
+### Modifier une transition
+
+Faites un **clic droit** sur une transition pour ouvrir sa fenêtre de modification. Cette fenêtre permet aussi de la supprimer.
+
+<img width="329" height="188" alt="Modification d'une transition" src="https://github.com/user-attachments/assets/6d21ae18-0462-405c-854e-79921a12d3cf" />
+
+### Déplacer une transition
+
+Cliquez sur une transition : un point rouge apparaît. Faites-le glisser pour modifier la courbure de la transition.
 
 https://github.com/user-attachments/assets/e905a87b-8ddd-4060-8d24-2d237047a13d
 
-## Sauvegarde un Automate
-Cliquez sur le bouton enregistrer pour sauvegarder votre automate sous format json.
+### Sauvegarder un automate
 
-<img width="1001" height="696" alt="image" src="https://github.com/user-attachments/assets/de5c7665-e8a9-4fc0-b0ff-a084c0acf6ea" />
+Cliquez sur **Enregistrer** pour sauvegarder l'automate au format JSON. Une notification verte confirme la réussite, une rouge signale un échec.
 
-Vous serez notifié par une notification vert en cas de réussite et rouge en cas d'échec
+<img width="1001" height="696" alt="Bouton Enregistrer" src="https://github.com/user-attachments/assets/de5c7665-e8a9-4fc0-b0ff-a084c0acf6ea" />
 
-## Exporter son Automate
-Cliquez sur le bouton Export ouvrira une fenetre d'option d'exportation.
+### Exporter un automate
 
-<img width="1001" height="696" alt="image" src="https://github.com/user-attachments/assets/4bdd1c22-29bf-45b9-9571-78ed16be5512" />
+Cliquez sur **Exporter** pour ouvrir la fenêtre des options d'export.
 
-Vous pouvez choisir entre trois options :
+<img width="1001" height="696" alt="Bouton Exporter" src="https://github.com/user-attachments/assets/4bdd1c22-29bf-45b9-9571-78ed16be5512" />
 
-<img width="383" height="335" alt="image" src="https://github.com/user-attachments/assets/84aa2708-e855-473f-8354-5b13d84f09e3" />
+<img width="383" height="335" alt="Options d'export" src="https://github.com/user-attachments/assets/84aa2708-e855-473f-8354-5b13d84f09e3" />
 
-### En tant qu'image
-Vous pourrez enregitrez l'automate en format image (png, jpg et bmp).
-### Vers le serveur distant
-Vous pouvez également enregistrer l'Automate dans le réseau.
-### En fichiers c#
-Vous pouvez également enregistrer l'Automate sous forme de plusieurs fichiers de classe en format .cs
-<img width="132" height="119" alt="image" src="https://github.com/user-attachments/assets/a45b67e7-a826-403a-ae29-6123be0298e2" />
+Trois options sont disponibles :
 
-## Importer un Automate
-Vous pouvez récupérer un automate en cliquer sur le bouton "Importer un automate".
+- **Image** : enregistre le schéma en PNG, JPG ou BMP ;
+- **Serveur distant** : envoie l'automate sur l'API (connexion requise) ;
+- **Fichiers C#** : génère les classes représentant l'automate (`.cs`).
 
-<img width="1266" height="791" alt="image" src="https://github.com/user-attachments/assets/7058ce87-d390-4132-a2ce-39eed1cfec9e" />
+<img width="132" height="119" alt="Fichiers C# générés" src="https://github.com/user-attachments/assets/a45b67e7-a826-403a-ae29-6123be0298e2" />
 
+### Importer un automate
 
-Cela ouvrir une nouvel page avec deux options : 
+Depuis l'accueil, cliquez sur **« Importer un automate »**.
 
-<img width="377" height="280" alt="image" src="https://github.com/user-attachments/assets/b7c31bc2-6197-45a9-8cf8-06205ff4a6fe" />
+<img width="1266" height="791" alt="Bouton Importer" src="https://github.com/user-attachments/assets/7058ce87-d390-4132-a2ce-39eed1cfec9e" />
 
-### Depuis un fichier
-Cliquez sur le bouton "Ouvrir un fichier". Cela ouvrira une fenetre de dialoque qui demandera un fichier en .json
+<img width="377" height="280" alt="Options d'import" src="https://github.com/user-attachments/assets/b7c31bc2-6197-45a9-8cf8-06205ff4a6fe" />
 
-### Depuis le réseau
-Cliquez sur "Récupérer un Automate" vous menera à une page de connexion :
+**Depuis un fichier** — cliquez sur « Ouvrir un fichier » et choisissez un fichier `.json`.
 
-<img width="1003" height="696" alt="image" src="https://github.com/user-attachments/assets/1d12e83a-1768-4648-be5a-8ab1233561cf" />
+**Depuis le serveur** — cliquez sur « Récupérer un Automate », puis connectez-vous :
 
-Insérez y vos identifiants et mot de passe.
+<img width="1003" height="696" alt="Page de connexion" src="https://github.com/user-attachments/assets/1d12e83a-1768-4648-be5a-8ab1233561cf" />
 
-Pour l'intant, il n'y a qu'un compte utilisateur utilisable :
-- Identifiant : root
-- Mot de passe : root
+Pour l'instant, un seul compte est disponible : identifiant `root`, mot de passe `root`.
 
-Cliquez sur "Connexion"
+<img width="540" height="313" alt="Connexion" src="https://github.com/user-attachments/assets/0b84a0e7-7225-4c97-a478-20b6c5f6b3e8" />
 
-<img width="540" height="313" alt="image" src="https://github.com/user-attachments/assets/0b84a0e7-7225-4c97-a478-20b6c5f6b3e8" />
+Choisissez un automate dans la liste puis cliquez sur **Importer**.
 
+<img width="1004" height="701" alt="Liste des automates" src="https://github.com/user-attachments/assets/455044d7-116d-4937-a963-435318bcc6e8" />
 
-Choisissez un automate présent dans la liste et cliquer sur le bouton "importer"
+> Le serveur est hébergé sur une offre gratuite : la première requête après une période d'inactivité peut prendre quelques dizaines de secondes.
 
-<img width="1004" height="701" alt="image" src="https://github.com/user-attachments/assets/455044d7-116d-4937-a963-435318bcc6e8" />
+## Développement
 
-# Installation & exécution
-## Prérequis
-- .NET 8 SDK ou supérieur
-- Docker (optionnel pour déploiement)
-- Visual Studio 2022.
+### Prérequis
 
-## Cloner le dépôt
-- Ouvrez Powershell sur le dossier de votre choix
-- Cloner le projet
-```
-git clone https://github.com/dept-info-iut-dijon/S5_ModernTech_AutomateDesign.git
+- Windows (WPF)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) ou supérieur
+- Visual Studio 2022 (facultatif, avec la charge de travail « Développement .NET Desktop »)
+
+### Compiler et lancer
+
+```bash
+git clone https://github.com/MalindiVal/AutomateDesign-Client.git
 ```
 
-## Lancer le client WPF
-- Cliquez sur le dossier Client
-  
-<img width="196" height="259" alt="image" src="https://github.com/user-attachments/assets/5d851ae1-3668-4075-97e8-f9fb870d020b" />
+```bash
+cd AutomateDesign-Client
+```
 
-- Cliquez sur la solution AutomateDesign.sln
+```bash
+dotnet run --project IHM/IHM.csproj
+```
 
-<img width="252" height="429" alt="image" src="https://github.com/user-attachments/assets/ce6f62aa-d0bb-426e-a946-7d1de3d5895c" />
+Avec Visual Studio : ouvrez `AutomateDesign.sln`, définissez **IHM** comme projet de démarrage, puis lancez avec **F5**.
 
-- Choisisez Visual Studio 2022 pour ouvrir la solution
-- Cliquez sur la flèche à coté de l'engrenage et sélectionner IHM
+### Tests
 
-<img width="189" height="191" alt="image" src="https://github.com/user-attachments/assets/5d7a0368-212f-4b04-8eef-afafa28bcb7a" />
+```bash
+dotnet test AutomateDesign.sln
+```
 
-- Cliquez sur le bouton Démarrer
+### Configuration de la connexion à l'API
 
-<img width="66" height="63" alt="image" src="https://github.com/user-attachments/assets/5d433954-0ea7-478d-a4d5-3a285cbd9310" />
+Les adresses de l'API sont définies dans [`Data/appsettings.json`](Data/appsettings.json), copié à côté de l'exécutable lors de la compilation (et présent dans l'archive des releases) :
 
-### Configuration de la connexion Client-API
-La connexion entre le client et l'API est gérée dans un projet nommé ClientData et les adresses sont stockées dans le fichier appsettings.json (il se trouve également dans le dossier contenant l'executable dans les releases)
+```json
+{
+  "API": {
+    "LocalMode": "true",
+    "BaseUrl": "https://automatedesign-api.onrender.com/",
+    "APICertificate": "50:51:2A:...:D9:31",
+    "LocalUrl": "https://localhost:7294/"
+  }
+}
+```
 
-<img width="669" height="148" alt="Capture d’écran 2025-11-13 142229" src="https://github.com/user-attachments/assets/53c19d25-5203-4c93-bae9-8f9fdb6aff8a" />
+| Clé | Rôle |
+| --- | --- |
+| `LocalMode` | `"true"` : utilise `LocalUrl` (API lancée en local) ; `"false"` : utilise `BaseUrl` (API déployée). |
+| `BaseUrl` | Adresse de l'API déployée. |
+| `APICertificate` | Empreinte SHA-1 du certificat de l'API déployée, vérifiée à chaque connexion (non utilisée en mode local). |
+| `LocalUrl` | Adresse de l'API lancée en local (voir [AutomateDesign-API](https://github.com/MalindiVal/AutomateDesign-API)). |
 
-- LocalMode permet à la classe APIConfig de savoir si il doit utiliser l'adresse se trouvant dans LocalUrl ou BaseUrl (true (le client utilisera l'api en localhost) ou false (le client utilisera l'api qui est actuellement déployé))
-- BaseUrl coresspond à l'adresse de l'API déployé
-- APICertificate correspond aux certificat de sécurité de l'API (SHA-1)
-- LocalUrl correspond à l'adresse utilisé pour l'hébergement local de l'API
+Le dépôt est configuré en mode local pour le développement ; les releases sont automatiquement basculées sur l'API déployée (`LocalMode` à `"false"`).
 
-# Structure du Projet
-Le projet est composé de plusieurs projets :
-- Un Client IHM en WPF
-- Un LogicLayer commun au Client et à l'API
-- Une bibliothèque dédiée à la gestion des données coté client
-- Une bibliothèque dédié aux ViewModels qui font le lien entre le logiclayer et l'IHM
-- Des tests unitaires pour les differents projets
+> Si le certificat de l'API déployée est renouvelé, mettez à jour `APICertificate`, sinon les connexions au serveur seront refusées.
 
+## Intégration continue et releases
+
+Deux workflows GitHub Actions sont définis dans [`.github/workflows`](.github/workflows) :
+
+- **[`dotnet-desktop.yml`](.github/workflows/dotnet-desktop.yml)** — à chaque push ou pull request sur `main` : compilation (Debug et Release), tests unitaires, et mise à disposition de la build Release en artefact.
+- **[`release.yml`](.github/workflows/release.yml)** — à chaque tag `v*` : tests, publication autonome `win-x64` (version de l'assembly tirée du tag), bascule de `appsettings.json` sur l'API déployée, puis création de la release GitHub avec l'archive `.zip` et des notes de version générées automatiquement.
+
+Pour publier une nouvelle version :
+
+```bash
+git tag v1.2.0
+```
+
+```bash
+git push origin v1.2.0
+```
+
+Un tag avec suffixe (par exemple `v1.2.0-beta.1`) est publié en pré-release. La release peut aussi être lancée manuellement depuis l'onglet **Actions** (workflow « Release », bouton « Run workflow »), en indiquant le tag à créer.
+
+## Structure du projet
+
+| Projet | Dossier | Rôle |
+| --- | --- | --- |
+| IHM | [`IHM/`](IHM) | Interface WPF (vues, convertisseurs, services d'export et de dialogue). Projet de démarrage. |
+| ViewModels | [`ViewModels/`](ViewModels) | ViewModels (MVVM) faisant le lien entre l'IHM et la logique. |
+| ClientService | [`Service/`](Service) | Services applicatifs : automates, utilisateurs, sérialisation JSON, génération C#. |
+| ClientData | [`Data/`](Data) | Accès à l'API (DAO HTTP) et configuration (`appsettings.json`). |
+| LogicLayer | [`LogicLayer/`](LogicLayer) | Modèle métier commun au client et à l'API : automates, états, transitions, géométrie. |
+| TestLogic, TestVM, TestClientServices | `Test*/` | Tests unitaires de la logique, des ViewModels et des services. |

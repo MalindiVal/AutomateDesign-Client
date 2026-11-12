@@ -1,11 +1,14 @@
 # Publie une release GitHub contenant la build du client WPF (IHM.exe).
 #
 # Déclenchement :
-#   - push d'un tag de version :  git tag v1.0.0 && git push origin v1.0.0
+#   - push d'un tag de version :  git tag v1.2.0 && git push origin v1.2.0
 #   - ou manuellement depuis l'onglet Actions (en indiquant le tag à créer)
+#
+# Un tag contenant un suffixe (ex : v1.2.0-beta.1) est publié en pré-release.
 #
 # Résultat : une release GitHub avec une archive AutomateDesign-<tag>-win-x64.zip
 # à décompresser, puis lancer IHM.exe (aucune installation de .NET requise).
+# L'archive est configurée pour utiliser l'API déployée (LocalMode = false).
 
 name: Release
 
@@ -15,11 +18,16 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag de la release (ex : v1.0.0)"
+        description: "Tag de la release (ex : v1.2.0)"
         required: true
 
 permissions:
   contents: write
+
+# Évite que deux releases du même tag tournent en parallèle
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -35,6 +43,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    # Vérifie le format du tag et en déduit la version (v1.2.0-beta.1 -> 1.2.0-beta.1)
+    - name: Compute version
+      id: version
+      run: |
+        if ($env:Tag -notmatch '^v(\d+\.\d+\.\d+)(-[0-9A-Za-z.-]+)?$') {
+          throw "Tag '$env:Tag' invalide : format attendu vX.Y.Z ou vX.Y.Z-suffixe"
+        }
+        $version = $env:Tag.Substring(1)
+        $prerelease = if ($Matches[2]) { "true" } else { "false" }
+        "version=$version" >> $env:GITHUB_OUTPUT
+        "prerelease=$prerelease" >> $env:GITHUB_OUTPUT
+        Write-Host "Version : $version (pré-release : $prerelease)"
+
     - name: Install .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -43,8 +64,11 @@ jobs:
     - name: Restore
       run: dotnet restore $env:Solution_Name
 
+    - name: Build
+      run: dotnet build $env:Solution_Name --configuration Release --no-restore
+
     - name: Execute unit tests
-      run: dotnet test $env:Solution_Name --configuration Release --no-restore
+      run: dotnet test $env:Solution_Name --configuration Release --no-build
 
     # Build autonome : l'utilisateur n'a pas besoin d'installer le runtime .NET
     - name: Publish the WPF client
@@ -53,14 +77,24 @@ jobs:
         --configuration Release
         --runtime $env:Runtime
         --self-contained true
+        -p:Version=${{ steps.version.outputs.version }}
         --output publish/AutomateDesign
+
+    # Le dépôt garde LocalMode = true pour le développement ;
+    # la release doit pointer vers l'API déployée.
+    - name: Configure appsettings for the deployed API
+      run: |
+        $path = "publish/AutomateDesign/appsettings.json"
+        if (-not (Test-Path $path)) { throw "appsettings.json est absent de la build publiée" }
+        $config = Get-Content $path -Raw | ConvertFrom-Json
+        $config.API.LocalMode = "false"
+        $config | ConvertTo-Json -Depth 5 | Set-Content $path -Encoding utf8
+        Get-Content $path
 
     - name: Check publish output
       run: |
-        foreach ($file in @("IHM.exe", "appsettings.json")) {
-          if (-not (Test-Path "publish/AutomateDesign/$file")) {
-            throw "$file est absent de la build publiée"
-          }
+        if (-not (Test-Path "publish/AutomateDesign/IHM.exe")) {
+          throw "IHM.exe est absent de la build publiée"
         }
 
     - name: Zip the build
@@ -70,6 +104,9 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.Tag }}
+        target_commitish: ${{ github.sha }}
         name: AutomateDesign ${{ env.Tag }}
+        prerelease: ${{ steps.version.outputs.prerelease }}
         generate_release_notes: true
+        fail_on_unmatched_files: true
         files: AutomateDesign-${{ env.Tag }}-${{ env.Runtime }}.zip
